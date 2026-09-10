@@ -1,0 +1,175 @@
+.primaryCta {
+  margin-top: 2rem;
+  border: 0;
+  border-radius: 999px;
+  padding: 1rem 2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #fff9f4;
+  background: linear-gradient(135deg, var(--rust) 0%, #c96c44 100%);
+}
+
+.hideUploadLink {
+  margin: 1rem 0 0;
+  border: 0;
+  background: transparent;
+  color: rgba(241, 233, 219, 0.72);
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+.uploadPanel {
+  width: min(760px, calc(100vw - 32px));
+  margin-top: 2.5rem;
+  padding: 1rem 1rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 1.4rem;
+  background: rgba(30, 23, 18, 0.68);
+  backdrop-filter: blur(10px);
+}
+
+.uploadHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.kicker {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(241, 233, 219, 0.7);
+}
+
+.helperLabel {
+  font-size: 0.76rem;
+  color: rgba(241, 233, 219, 0.7);
+}
+
+.dropZone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(39, 30, 23, 0.72);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+}
+
+.uploadContent {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.uploadIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+
+.uploadText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.uploadText strong {
+  font-size: 1rem;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.uploadText span {
+  font-size: 0.75rem;
+  color: rgba(241, 233, 219, 0.7);
+}
+
+.secondaryButton {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.9rem;
+}
+
+.metaColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.statusText {
+  font-size: 0.82rem;
+  color: rgba(241, 233, 219, 0.72);
+}
+
+.errorText {
+  font-size: 0.75rem;
+  color: #f1b3a7;
+}
+
+.primaryCtaSmall {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff9f4;
+  background: linear-gradient(135deg, var(--rust) 0%, #c96c44 100%);
+  cursor: pointer;
+}
+
+.primaryCtaSmall:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .dropZone,
+  .actionRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .secondaryButton,
+  .primaryCtaSmall {
+    width: 100%;
+  }
+}

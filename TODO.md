@@ -1,10 +1,10 @@
 # Project Todo
 
 ## Phase 1: Product flow and app foundation
-- [ ] Read the product requirements in [PRD.md](PRD.md)
-- [ ] Review the frontend and backend architecture docs
-- [ ] Set up the Next.js app shell and base styling
-- [ ] Build the landing page and upload entry flow
+- [x] Read the product requirements in [PRD.md](PRD.md)
+- [x] Review the frontend and backend architecture docs
+- [x] Set up the Next.js app shell and base styling
+- [x] Build the landing page and upload entry flow
 - [ ] Build the signed-out generate experience
 - [ ] Add the signup-before-generation gate
 - [ ] Create the post-signup redirect and user onboarding flow

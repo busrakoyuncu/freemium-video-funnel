@@ -1,13 +1,21 @@
+'use client';
+
+import { useState } from 'react';
+import { UploadPanel } from '@/components/features/upload-panel';
 import styles from './page.module.css';
 
 export default function Home() {
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+
   return (
     <div className={styles.page}>
       <header className={styles.topBar}>
         <div className={styles.brand}>freemium video funnel</div>
-        <button className={styles.authButton} type="button">
-          Sign in / Sign up
-        </button>
+        {!isUploadOpen ? (
+          <button className={styles.authButton} type="button">
+            Sign in / Sign up
+          </button>
+        ) : null}
       </header>
 
       <div className={styles.videoWrap}>
@@ -26,16 +34,21 @@ export default function Home() {
       </div>
 
       <main className={styles.hero}>
-        <h1>Start Create Video</h1>
+        <h1>Create your next video</h1>
 
         <p>
-          Create AI-powered video ideas faster with a polished creator workflow built
-          for speed, quality, and creative control.
+          Upload your idea, choose a style, and generate a polished video in
+          minutes.
         </p>
 
-        <button className={styles.primaryCta} type="button">
-          Start Create Video
-        </button>
+        <UploadPanel
+          isUploadOpen={isUploadOpen}
+          onOpen={() => setIsUploadOpen(true)}
+          onClose={() => setIsUploadOpen(false)}
+          onAuthClick={() => {
+            // placeholder for future auth flow
+          }}
+        />
       </main>
     </div>
   );
