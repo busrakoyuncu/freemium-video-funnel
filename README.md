@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# freemium-video-funnel
 
-## Getting Started
+A demo app for a freemium AI video product. The goal is to show a simple funnel: free tool usage, signup, and credit-based generation. This is not a production app. It is a proof of concept for funnel instrumentation and async render jobs.
 
-First, run the development server:
+## Product idea
+
+A visitor can use a free MP3-to-MP4 tool without signing in. Once they add a song and try to start a full music video render, they are asked to sign up before generation continues. After signup, they land on the generation page, spend credits, and watch the render progress until they receive a video.
+
+The app is meant to demonstrate:
+
+- funnel behavior from anonymous tool use to signup
+- credit reservation and redemption logic
+- async job handling with polling
+- PostHog analytics around the funnel
+- server-side auth and ownership checks
+
+## Core flow
+
+1. User visits the landing page.
+2. User opens the free MP3-to-MP4 tool.
+3. User uploads an MP3 and sees a result.
+4. User clicks Generate video.
+5. If signed out, the app prompts signup before generation starts.
+6. User signs up and lands on the generate page.
+7. User pays 10 credits to start a render.
+8. The app polls job status and shows queued, rendering, voice added, done, or failed states.
+9. When complete, the user sees the final video.
+
+## Pages
+
+- / : landing page with links to the tool and auth flows
+- /mp3-to-mp4 : free tool experience, no login required
+- /signup : email and password signup
+- /login : email and password login
+- /generate : protected page for render creation and progress tracking
+
+## Backend behavior
+
+The app uses Next.js API routes for the job flow:
+
+- POST /api/convert : free tool conversion
+- POST /api/jobs : create a render job and reserve credits
+- GET /api/jobs/[id] : fetch status and final video when complete
+
+Important rules:
+
+- session is required for job creation and lookup
+- user ownership is enforced server-side
+- user.id is read from the Supabase session only
+- credits are reserved on start, committed on success, and refunded on failure
+- MOCK_RENDER=true simulates render stages without calling Shotstack
+
+## Data model
+
+The database is intentionally small. Only these tables are in scope:
+
+- profiles
+  - user_id pk
+  - credits int default 50
+  - created_at
+- jobs
+  - id uuid pk
+  - user_id
+  - status text
+  - video_url text nullable
+  - created_at
+
+## Analytics
+
+The analytics layer is centered on the funnel:
+
+tool_opened -> file_uploaded -> cta_clicked -> signup_completed -> job_created -> job_completed
+
+Client events include:
+
+- tool_opened
+- file_uploaded
+- processing_done
+- cta_clicked
+
+Server events include:
+
+- signup_completed
+- job_created
+- job_completed
+- job_failed
+
+## Stack
+
+- Next.js App Router
+- TypeScript
+- Mantine UI
+- Supabase Auth and Postgres
+- Shotstack sandbox
+- PostHog
+- Vercel deployment
+
+## Local setup
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the app locally:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 in the browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project expects environment variables for Supabase, Shotstack, and PostHog. The exact values depend on your local setup. The app should include a mock render mode for local testing.
 
-## Learn More
+Example keys to configure:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+SHOTSTACK_API_KEY=
+NEXT_PUBLIC_POSTHOG_KEY=
+NEXT_PUBLIC_POSTHOG_HOST=
+MOCK_RENDER=true
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project is a demo for product and funnel validation. It keeps the scope narrow and intentionally omits broader SaaS features such as OAuth, password reset, payments, and profile management.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The official product requirements live in [PRD.md](PRD.md).
