@@ -38,11 +38,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 5rem;
   padding: 1.25rem 2rem;
 }
 
 .brand {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
   font-weight: 600;
   letter-spacing: -0.04em;
   color: rgba(241, 233, 219, 0.96);
@@ -54,8 +55,9 @@
   color: var(--ink);
   border-radius: 999px;
   padding: 0.72rem 1.15rem;
-  font-size: 0.9rem;
+  font-size: clamp(0.78rem, 1vw, 0.9rem);
   font-weight: 600;
+  line-height: 1.2;
   cursor: pointer;
   backdrop-filter: blur(10px);
 }
@@ -90,96 +92,216 @@
   color: rgba(241, 233, 219, 0.82);
 }
 
-.page {
-  position: relative;
-  min-height: 100vh;
-  width: 100%;
-  overflow: hidden;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-plus-jakarta-sans), 'Segoe UI', sans-serif;
-}
-
-.videoWrap {
-  position: absolute;
+.modalOverlay {
+  position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(12, 9, 8, 0.72);
+  backdrop-filter: blur(8px);
 }
 
-.video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(0.12) contrast(1.05) brightness(0.72);
-  background: #111;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(22, 17, 13, 0.12) 0%,
-    rgba(22, 17, 13, 0.52) 100%
-  );
-}
-
-.topBar {
+.authModal {
   position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 2rem;
+  width: min(100%, 440px);
+  padding: 1.5rem 1.25rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.2rem;
+  background: rgba(22, 17, 13, 0.96);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
 }
 
-.brand {
-  font-size: 1.2rem;
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  color: rgba(241, 233, 219, 0.96);
-}
-
-.authButton {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(31, 25, 22, 0.54);
-  color: var(--ink);
-  border-radius: 999px;
-  padding: 0.72rem 1.15rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+.closeButton {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.9rem;
+  border: 0;
+  background: transparent;
+  color: rgba(241, 233, 219, 0.7);
+  font-size: 1.6rem;
   cursor: pointer;
-  backdrop-filter: blur(10px);
 }
 
-.hero {
-  position: relative;
-  z-index: 2;
-  min-height: calc(100vh - 90px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem 1rem 3rem;
+.modalEyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(241, 233, 219, 0.7);
 }
 
-.hero h1 {
-  margin-top: 1.5rem;
-  font-size: clamp(3rem, 5vw, 6.2rem);
-  line-height: 0.94;
-  letter-spacing: -0.08em;
-  font-weight: 700;
-  max-width: 840px;
+.modalTitle {
+  margin: 0.7rem 0 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  letter-spacing: -0.06em;
   color: #f8f4ef;
 }
 
-.hero p {
-  margin-top: 1.75rem;
-  max-width: 720px;
-  font-size: clamp(1.05rem, 2vw, 1.5rem);
-  line-height: 1.5;
-  color: rgba(241, 233, 219, 0.82);
+.modalText {
+  margin: 0.7rem 0 0;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  color: rgba(241, 233, 219, 0.8);
+}
+
+.authTabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.authTab {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: rgba(241, 233, 219, 0.72);
+  font: inherit;
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.authTabActive {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8f4ef;
+}
+
+.modalFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.passwordFieldWrap {
+  position: relative;
+}
+
+.modalInput {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.9rem 1rem;
+  color: var(--ink);
+  font: inherit;
+}
+
+.passwordFieldWrap .modalInput {
+  padding-right: 3rem;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  background: transparent;
+  color: rgba(241, 233, 219, 0.8);
+  cursor: pointer;
+  padding: 0;
+}
+
+.passwordToggle svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.passwordRules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.7rem;
+  margin-top: -0.2rem;
+  font-size: 0.72rem;
+  color: rgba(241, 233, 219, 0.65);
+}
+
+.passwordRules span {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.passwordRules span::before {
+  content: '•';
+  margin-right: 0.35rem;
+  color: rgba(241, 233, 219, 0.45);
+}
+
+.rulePassed {
+  color: #cfeecf;
+}
+
+.passwordMismatch {
+  margin-top: -0.2rem;
+  font-size: 0.75rem;
+  color: #f1b3a7;
+}
+
+.modalInput::placeholder {
+  color: rgba(241, 233, 219, 0.55);
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.modalPrimary,
+.modalSecondary {
+  flex: 1;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modalPrimary {
+  border: 0;
+  background: linear-gradient(135deg, var(--rust) 0%, #c96c44 100%);
+  color: white;
+}
+
+.modalPrimary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.modalSecondary {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: rgba(241, 233, 219, 0.8);
+}
+
+.modalInlineLink {
+  display: block;
+  width: fit-content;
+  margin: 0.8rem auto 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: rgba(241, 233, 219, 0.9);
+  font: inherit;
+  font-size: 0.82rem;
+  text-decoration: underline;
+  text-underline-offset: 0.16rem;
+  cursor: pointer;
+  text-align: center;
 }
 
 @media (max-width: 640px) {

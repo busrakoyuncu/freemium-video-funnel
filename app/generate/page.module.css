@@ -1,0 +1,279 @@
+.workspace {
+  display: flex;
+  min-height: 100vh;
+  background: #16110d;
+  color: #f1e9db;
+}
+
+.sidebar {
+  display: flex;
+  flex: 0 0 232px;
+  flex-direction: column;
+  gap: 1rem;
+  border-right: 1px solid #3b2d1f;
+  padding: 1.5rem;
+  background: #1e1712;
+}
+
+.brandMark {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border: 1px solid #d79b46;
+  border-radius: 0.7rem;
+  color: #d79b46;
+  font-weight: 700;
+}
+
+.brandName {
+  max-width: 10rem;
+  margin: 0;
+  color: #f1e9db;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.nav {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1.5rem;
+}
+
+.navItem,
+.navItemActive {
+  border-radius: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  color: #a8967e;
+  font-size: 0.86rem;
+  text-decoration: none;
+}
+
+.navItemActive {
+  border: 1px solid #3b2d1f;
+  background: #271e17;
+  color: #d79b46;
+}
+
+.planCard {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: auto;
+  border: 1px solid #3b2d1f;
+  border-radius: 0.8rem;
+  padding: 0.9rem;
+  background: #271e17;
+  color: #a8967e;
+  font-size: 0.75rem;
+}
+
+.planCard strong {
+  color: #f1e9db;
+  font-size: 1.25rem;
+}
+.signOutButton {
+  border: 1px solid #3b2d1f;
+  border-radius: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  background: transparent;
+  color: #a8967e;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  text-align: left;
+}
+
+.signOutButton:hover {
+  border-color: #795025;
+  color: #f1e9db;
+}
+
+.content {
+  width: min(100%, 1240px);
+  padding: 2rem clamp(1.25rem, 4vw, 3rem);
+}
+
+.toolbar,
+.sectionHeader,
+.fileRow,
+.renderPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toolbar {
+  padding-bottom: 2rem;
+}
+
+.toolbar h1,
+.sectionHeader h2,
+.renderPanel h3 {
+  margin: 0.35rem 0 0;
+  color: #f1e9db;
+  letter-spacing: -0.04em;
+}
+
+.toolbar h1 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+.sectionHeader h2 {
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+}
+
+.eyebrow {
+  color: #a8967e;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.credits,
+.status {
+  border: 1px solid #795025;
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  color: #d79b46;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.contentSection {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 900px;
+  border: 1px solid #3b2d1f;
+  border-radius: 1.25rem;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: #1e1712;
+}
+
+.status {
+  color: #a8967e;
+}
+
+.fileRow {
+  justify-content: flex-start;
+  border: 1px solid #3b2d1f;
+  border-radius: 0.75rem;
+  padding: 0.9rem;
+  background: #271e17;
+}
+
+.fileIcon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  place-items: center;
+  border-radius: 0.6rem;
+  background: #795025;
+  color: #f1e9db;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.fileDetails {
+  display: grid;
+  min-width: 0;
+  gap: 0.3rem;
+}
+
+.fileDetails strong {
+  overflow: hidden;
+  color: #f1e9db;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileDetails span,
+.renderPanel p {
+  color: #a8967e;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.fileInput {
+  display: none;
+}
+
+.secondaryButton {
+  flex: 0 0 auto;
+  border: 1px solid #3b2d1f;
+  border-radius: 999px;
+  padding: 0.7rem 0.9rem;
+  background: #271e17;
+  color: #f1e9db;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.secondaryButton:hover {
+  border-color: #795025;
+}
+
+.errorMessage {
+  margin: -0.7rem 0 0;
+  color: #d79b46;
+  font-size: 0.8rem;
+}
+
+.renderPanel {
+  align-items: flex-end;
+  border-top: 1px solid #3b2d1f;
+  padding-top: 1.5rem;
+}
+
+.renderPanel p {
+  max-width: 36rem;
+  margin: 0.6rem 0 0;
+}
+
+.primaryButton {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.85rem 1.1rem;
+  background: #b85c33;
+  color: #fff9f4;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 760px) {
+  .workspace {
+    display: block;
+  }
+
+  .sidebar {
+    min-height: auto;
+    border-right: 0;
+    border-bottom: 1px solid #3b2d1f;
+  }
+
+  .nav {
+    display: flex;
+    margin-top: 0;
+    overflow-x: auto;
+  }
+
+  .renderPanel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primaryButton {
+    width: 100%;
+  }
+}

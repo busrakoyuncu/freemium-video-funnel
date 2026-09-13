@@ -10,8 +10,34 @@
   background: linear-gradient(135deg, var(--rust) 0%, #c96c44 100%);
 }
 
+.uploadShell {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    grid-template-rows 0.35s ease,
+    opacity 0.2s ease,
+    transform 0.35s ease,
+    margin-top 0.35s ease;
+  pointer-events: none;
+}
+
+.uploadShell.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 1rem;
+  pointer-events: auto;
+}
+
+.uploadInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .hideUploadLink {
-  margin: 1rem 0 0;
+  display: inline-block;
+  margin: 0 0 0.9rem;
   border: 0;
   background: transparent;
   color: rgba(241, 233, 219, 0.72);
@@ -20,16 +46,31 @@
   cursor: pointer;
   padding: 0;
   font: inherit;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.2s ease, transform 0.25s ease;
+}
+
+.uploadShell.open .hideUploadLink {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .uploadPanel {
   width: min(760px, calc(100vw - 32px));
-  margin-top: 2.5rem;
   padding: 1rem 1rem 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.4rem;
   background: rgba(30, 23, 18, 0.68);
   backdrop-filter: blur(10px);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.3s ease;
+}
+
+.uploadShell.open .uploadPanel {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .uploadHeader {
@@ -159,6 +200,160 @@
 .primaryCtaSmall:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.signupGate {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
+  background: rgba(17, 13, 11, 0.78);
+  text-align: left;
+}
+
+.signupTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8f4ef;
+}
+
+.signupText {
+  margin: 0.5rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(241, 233, 219, 0.75);
+}
+
+.signupActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.signupPrimary,
+.signupSecondary {
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signupPrimary {
+  border: 0;
+  background: linear-gradient(135deg, var(--rust) 0%, #c96c44 100%);
+  color: #fff9f4;
+}
+
+.signupSecondary {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: rgba(241, 233, 219, 0.8);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(12, 9, 8, 0.72);
+  backdrop-filter: blur(8px);
+}
+
+.authModal {
+  position: relative;
+  width: min(100%, 440px);
+  padding: 1.5rem 1.25rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 1.2rem;
+  background: rgba(22, 17, 13, 0.96);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
+}
+
+.closeButton {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.9rem;
+  border: 0;
+  background: transparent;
+  color: rgba(241, 233, 219, 0.7);
+  font-size: 1.6rem;
+  cursor: pointer;
+}
+
+.modalEyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(241, 233, 219, 0.7);
+}
+
+.modalTitle {
+  margin: 0.7rem 0 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  letter-spacing: -0.06em;
+  color: #f8f4ef;
+}
+
+.modalText {
+  margin: 0.7rem 0 0;
+  font-size: 0.96rem;
+  line-height: 1.6;
+  color: rgba(241, 233, 219, 0.8);
+}
+
+.modalFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.modalInput {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.9rem 1rem;
+  color: var(--ink);
+  font: inherit;
+}
+
+.modalInput::placeholder {
+  color: rgba(241, 233, 219, 0.55);
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+}
+
+.modalPrimary,
+.modalSecondary {
+  flex: 1;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modalPrimary {
+  border: 0;
+  background: linear-gradient(135deg, var(--rust) 0%, #c96c44 100%);
+  color: white;
+}
+
+.modalSecondary {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: rgba(241, 233, 219, 0.8);
 }
 
 @media (max-width: 640px) {
