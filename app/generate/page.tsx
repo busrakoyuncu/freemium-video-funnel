@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { useAppStore } from '@/store/use-app-store';
@@ -13,26 +13,6 @@ export default function GeneratePage() {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { selectedFile, setSelectedFile, errorMessage, setErrorMessage } = useAppStore();
   const [isRendering, setIsRendering] = useState(false);
-
-  useEffect(() => {
-    const supabase = getSupabaseBrowserClient();
-
-    if (!supabase) {
-      return;
-    }
-
-    let isMounted = true;
-
-    void supabase.auth.getSession().then(({ data }) => {
-      if (isMounted && !data.session) {
-        router.replace('/');
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [router]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
@@ -63,6 +43,7 @@ export default function GeneratePage() {
 
     setSelectedFile(null);
     router.push('/');
+    router.refresh();
   };
 
   const handleGenerate = async () => {
@@ -71,33 +52,12 @@ export default function GeneratePage() {
     }
 
     setErrorMessage('');
-
-    const supabase = getSupabaseBrowserClient();
-
-    if (!supabase) {
-      setErrorMessage('The account service is not configured.');
-      return;
-    }
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    if (!session) {
-      setErrorMessage('Please sign in before generating a video.');
-      router.replace('/');
-      return;
-    }
-
     setIsRendering(true);
 
     try {
       const response = await fetch('/api/jobs', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           file: {
             name: selectedFile.name,

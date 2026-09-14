@@ -1,25 +1,27 @@
 'use client';
 
 import { ChangeEvent, KeyboardEvent, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { useAppStore } from '@/store/use-app-store';
 import styles from './upload-panel.module.css';
 
 type UploadPanelProps = {
-  isUploadOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
-  onAuthClick?: () => void;
+  isSignedIn: boolean;
 };
 
-export function UploadPanel({
-  isUploadOpen,
-  onOpen,
-  onClose,
-  onAuthClick,
-}: UploadPanelProps) {
+export function UploadPanel({ isSignedIn }: UploadPanelProps) {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { selectedFile, errorMessage, setSelectedFile, setErrorMessage } = useAppStore();
+  const {
+    isUploadOpen,
+    setUploadOpen,
+    openAuthModal,
+    selectedFile,
+    errorMessage,
+    setSelectedFile,
+    setErrorMessage,
+  } = useAppStore();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
@@ -56,27 +58,45 @@ export function UploadPanel({
 
   const handlePrimaryAction = () => {
     if (!isUploadOpen) {
-      onOpen();
+      setUploadOpen(true);
       return;
     }
 
-    onAuthClick?.();
+    if (isSignedIn) {
+      router.push('/generate');
+      return;
+    }
+
+    openAuthModal('signin');
   };
 
+  // Generate is the conversion gate, so signed-out users land on the sign up tab.
   const handleGenerateClick = () => {
     if (!selectedFile) return;
-    onAuthClick?.();
+
+    if (isSignedIn) {
+      router.push('/generate');
+      return;
+    }
+
+    openAuthModal('signup');
   };
+
+  const primaryLabel = !isUploadOpen
+    ? 'Start creating video'
+    : isSignedIn
+      ? 'Open workspace'
+      : 'Sign up / Sign in';
 
   return (
     <>
       <button className={styles.primaryCta} type="button" onClick={handlePrimaryAction}>
-        {isUploadOpen ? 'Sign up / Sign in' : 'Start creating video'}
+        {primaryLabel}
       </button>
 
       <div className={`${styles.uploadShell} ${isUploadOpen ? styles.open : ''}`}>
         <div className={styles.uploadInner}>
-          <button type="button" className={styles.hideUploadLink} onClick={onClose}>
+          <button type="button" className={styles.hideUploadLink} onClick={() => setUploadOpen(false)}>
             Hide upload
           </button>
 

@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { isAcceptedAudio, MAX_FILE_SIZE_BYTES } from '@/lib/audio-file';
+import { getSupabaseServerClient } from '@/lib/supabase/server-client';
 
 export async function POST(request: NextRequest) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const authorization = request.headers.get('authorization');
+  const supabase = await getSupabaseServerClient();
 
-  if (!url || !key || !authorization?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
+  if (!supabase) {
+    return NextResponse.json({ error: 'The account service is not configured.' }, { status: 500 });
   }
-
-  const supabase = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { Authorization: authorization } },
-  });
 
   const {
     data: { user },

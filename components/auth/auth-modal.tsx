@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/use-app-store';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
@@ -40,16 +40,33 @@ export function AuthModal() {
     ? Boolean(email && passwordRules.isValid)
     : Boolean(email && password);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAuthModalOpen(false);
     setPassword('');
     setErrorMessage('');
     setShowSignupReminder(false);
-  };
+  }, [setAuthModalOpen, setShowSignupReminder]);
+
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') handleClose();
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isAuthModalOpen, handleClose]);
 
   if (!isAuthModalOpen) {
     return null;
   }
+
+  const enterWorkspace = () => {
+    setAuthModalOpen(false);
+    router.push('/generate');
+    router.refresh();
+  };
 
   const handleModeChange = (nextMode: 'signin' | 'signup') => {
     setAuthEntryMode(nextMode);
@@ -76,29 +93,23 @@ export function AuthModal() {
       const supabase = getSupabaseBrowserClient();
 
       if (!supabase) {
-        if (isSignup) {
-          setAuthEntryMode('signin');
-          setEmail('');
-          setPassword('');
-          setShowSignupReminder(true);
-          setErrorMessage('');
-          setIsSubmitting(false);
-          return;
-        }
-
-        setAuthModalOpen(false);
-        setIsSubmitting(false);
-        return;
+        throw new Error('The account service is not configured.');
       }
 
       if (isSignup) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
 
         if (error) {
           throw error;
+        }
+
+        // Supabase returns a session right away when email confirmation is off.
+        if (data.session) {
+          enterWorkspace();
+          return;
         }
 
         setAuthEntryMode('signin');
@@ -122,8 +133,7 @@ export function AuthModal() {
         throw error;
       }
 
-      setAuthModalOpen(false);
-      router.push('/generate');
+      enterWorkspace();
     } catch (error) {
       const message = error instanceof Error ? error.message : '';
       const isNetworkError = message.toLowerCase().includes('failed to fetch');
@@ -140,7 +150,13 @@ export function AuthModal() {
 
   return (
     <div className={styles.modalOverlay} onClick={handleClose}>
-      <div className={styles.authModal} onClick={(event) => event.stopPropagation()}>
+      <div
+        className={styles.authModal}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+        onClick={(event) => event.stopPropagation()}
+      >
         <button
           type="button"
           className={styles.closeButton}
@@ -169,7 +185,7 @@ export function AuthModal() {
           </button>
         </div>
 
-        <h3 className={styles.modalTitle}>{isSignup ? 'Create your account' : 'Welcome back'}</h3>
+        <h3 id="auth-modal-title" className={styles.modalTitle}>{isSignup ? 'Create your account' : 'Welcome back'}</h3>
         <p className={styles.modalText}>
           {isSignup
             ? 'Create an account to continue creating your video and unlock your generation flow.'
