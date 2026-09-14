@@ -164,3 +164,13 @@ so the modal explains in plain words why sharing is not available yet, before an
 only shows the share link when it will pay out. The click is measured with `cta_clicked`
 (`cta = share_to_earn`) and the grant with `share_reward_claimed`. The plan card links to the same modal so the offer is discoverable
 before credits run out.
+
+## Experiments: one flag, one metric, client-side evaluation
+
+A/B tests run through PostHog Experiments, with the process in `docs/EXPERIMENTS.md`. Flags are
+read in the browser through one hook that returns `control` until PostHog answers, so there is
+no variant flicker and no server-side evaluation to keep in sync with the browser's person id.
+The first test changes only the landing hero copy, because it sits at the top of the funnel,
+the metric already exists, and a one-string change keeps the focus on proving the mechanics.
+With demo traffic the result will rarely be significant; the point of the first run is that
+flag, exposure, and result all line up.

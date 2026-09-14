@@ -59,13 +59,19 @@
 - [x] Track completion and result events
 - [x] Build the funnel insights in PostHog (free tool to render, free conversion, workspace render, signup to render)
 
-## Phase 7: Tests
+## Phase 7: Experiments
+- [ ] Create the "Landing CTA copy" experiment in PostHog with flag key landing-cta
+- [ ] Add useExperiment and read the flag in UploadPanel
+- [ ] QA both variants, deploy, then launch the experiment
+- [ ] Log the result in docs/EXPERIMENTS.md and remove the flag
+
+## Phase 8: Tests
 - [x] Add Vitest with an `npm test` script
 - [x] Unit tests for `lib/audio-file.ts` and `lib/jobs.ts`
 - [x] Route tests for /api/jobs, /api/jobs/[id], and /api/convert with the Supabase client mocked
 - [ ] One Playwright smoke test at deploy time: seeded account, generate, done, credits 40
 
-## Phase 8: QA and polish
+## Phase 9: QA and polish
 - [ ] Test the full funnel end-to-end by hand
 - [ ] Check auth and session edge cases
 - [ ] Fix UX issues and polish the flow

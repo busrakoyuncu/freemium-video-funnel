@@ -159,6 +159,7 @@ Run with `npm test`. See [docs/TESTING.md](docs/TESTING.md) for how the mocks wo
 - [docs/ARCHITECTURE-FE.md](docs/ARCHITECTURE-FE.md) and [docs/ARCHITECTURE-BE.md](docs/ARCHITECTURE-BE.md): how the app is built
 - [docs/DESIGN-ARCHITECTURE.md](docs/DESIGN-ARCHITECTURE.md): visual direction and tokens
 - [docs/TESTING.md](docs/TESTING.md): how the tests work
+- [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md): how A/B tests are run, and the experiment log
 
 ## Notes
 
