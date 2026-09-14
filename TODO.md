@@ -61,7 +61,7 @@
 ## Phase 7: Tests
 - [x] Add Vitest with an `npm test` script
 - [x] Unit tests for `lib/audio-file.ts` and `lib/jobs.ts`
-- [ ] Route tests for /api/jobs, /api/jobs/[id], and /api/convert with the Supabase client mocked
+- [x] Route tests for /api/jobs, /api/jobs/[id], and /api/convert with the Supabase client mocked
 - [ ] One Playwright smoke test at deploy time: seeded account, generate, done, credits 40
 
 ## Phase 8: QA and polish

@@ -139,15 +139,15 @@ Not yet: audio upload storage, Shotstack rendering, the out-of-credits modal, te
 
 ## Testing
 
-Planned scope, kept small on purpose:
+Scope, kept small on purpose:
 
 - Vitest unit tests for the pure logic in `lib/` (file validation, mock stage timing).
 - Vitest route tests that call the exported handlers directly with the Supabase client mocked, covering 401, 422, 501, 402, the happy path, and the refund fallback.
-- One Playwright smoke test after deploy: a seeded account renders a video and ends at 40 credits.
+- One Playwright smoke test after deploy (planned): a seeded account renders a video and ends at 40 credits.
 
 The SQL functions are not tested automatically. They are small, were verified live, and testing them needs a local Supabase stack. No component or snapshot tests.
 
-Run with `npm test` once the suite exists.
+Run with `npm test`. See [docs/TESTING.md](docs/TESTING.md) for how the mocks work and how to add a test.
 
 ## Notes
 
