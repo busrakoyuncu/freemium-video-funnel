@@ -59,8 +59,8 @@
 - [x] Build the funnel insights in PostHog (free tool to render, free conversion, workspace render, signup to render)
 
 ## Phase 7: Tests
-- [ ] Add Vitest with an `npm test` script
-- [ ] Unit tests for `lib/audio-file.ts` and `lib/jobs.ts`
+- [x] Add Vitest with an `npm test` script
+- [x] Unit tests for `lib/audio-file.ts` and `lib/jobs.ts`
 - [ ] Route tests for /api/jobs, /api/jobs/[id], and /api/convert with the Supabase client mocked
 - [ ] One Playwright smoke test at deploy time: seeded account, generate, done, credits 40
 
