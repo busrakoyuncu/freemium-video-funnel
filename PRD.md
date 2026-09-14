@@ -38,10 +38,10 @@ If the user is not signed in and they have already added their song, the Generat
 ## 5. DATA (Supabase Postgres)
 The database has two tables only.
 
-- profiles : user_id pk, references auth.users, credits int default 50, created_at
+- profiles : user_id pk, email, references auth.users, credits int default 50, created_at
 - jobs : id uuid pk, user_id, status text, video_url text nullable, created_at
 
-There are no other tables. There are no extra profile fields in scope. The schema stays narrow so the demo is easy to understand.
+There are no other tables. The email field mirrors auth.users.email for convenient profile visibility; authentication remains managed by Supabase Auth. The schema stays narrow so the demo is easy to understand.
 
 The default user balance is 50 credits after signup. This is a product choice for the demo and makes the funnel feel active from the start.
 

@@ -42,3 +42,14 @@ server routes and cookie-based sessions remain part of the production backend wo
 The browser client is created once in `lib/supabase/browser-client.ts` and uses only the public
 Supabase URL and publishable key. Credentials live in the ignored `.env.local` file and are never
 committed to the public repository. No service-role or secret key is exposed to the browser.
+
+## Database scope: profiles and jobs only
+
+The first Supabase migration defines only `profiles` and `jobs`. New users receive 50 credits
+through the auth trigger. Row-level security lets authenticated users read only their own rows;
+credit changes and job creation remain server-side operations so the browser cannot award credits
+or create jobs for another user.
+
+The `profiles.email` field mirrors `auth.users.email` for convenient profile-table visibility.
+Credentials remain managed only by Supabase Auth, and an Auth email update synchronizes the
+profile value.

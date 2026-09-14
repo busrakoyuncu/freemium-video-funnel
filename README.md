@@ -56,6 +56,7 @@ The database is intentionally small. Only these tables are in scope:
 
 - profiles
   - user_id pk
+  - email (mirrors auth.users.email)
   - credits int default 50
   - created_at
 - jobs
