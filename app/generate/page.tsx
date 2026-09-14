@@ -70,12 +70,56 @@ export default function GeneratePage() {
     router.push('/');
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!selectedFile || isRendering) {
       return;
     }
 
+    setErrorMessage('');
+
+    const supabase = getSupabaseBrowserClient();
+
+    if (!supabase) {
+      setErrorMessage('The account service is not configured.');
+      return;
+    }
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      setErrorMessage('Please sign in before generating a video.');
+      router.replace('/');
+      return;
+    }
+
     setIsRendering(true);
+
+    try {
+      const response = await fetch('/api/jobs', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          file: {
+            name: selectedFile.name,
+            size: selectedFile.size,
+            type: selectedFile.type,
+          },
+        }),
+      });
+      const result = (await response.json()) as { error?: string; status?: string };
+
+      if (!response.ok) {
+        throw new Error(result.error ?? 'Could not start the generation.');
+      }
+    } catch (error) {
+      setIsRendering(false);
+      setErrorMessage(error instanceof Error ? error.message : 'Could not start the generation.');
+    }
   };
 
   return (

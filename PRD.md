@@ -41,7 +41,17 @@ The database has two tables only.
 - profiles : user_id pk, email, references auth.users, credits int default 50, created_at
 - jobs : id uuid pk, user_id, status text, video_url text nullable, created_at
 
-There are no other tables. The email field mirrors auth.users.email for convenient profile visibility; authentication remains managed by Supabase Auth. The schema stays narrow so the demo is easy to understand.
+The `profiles` row represents the app-level account state. It stores the user's email for
+convenient visibility and the current credit balance. Authentication credentials remain managed
+by Supabase Auth.
+
+The `jobs` table represents one requested full video generation. A job is created when an
+authenticated user clicks Generate. It stores the owner, the current lifecycle status, and the
+finished video's URL when rendering completes. The job status moves through `queued`, `rendering`,
+`voice_added`, `done`, or `failed`. The table stores metadata and status, not uploaded audio bytes.
+
+There are no other tables. This keeps the demo narrow and makes each generation request traceable
+without mixing render state into the user profile.
 
 The default user balance is 50 credits after signup. This is a product choice for the demo and makes the funnel feel active from the start.
 

@@ -53,3 +53,11 @@ or create jobs for another user.
 The `profiles.email` field mirrors `auth.users.email` for convenient profile-table visibility.
 Credentials remain managed only by Supabase Auth, and an Auth email update synchronizes the
 profile value.
+
+## Generation requests: reserve credits server-side
+
+The Generate workspace sends validated audio metadata and the current Supabase access token to
+`POST /api/jobs`. The route validates the user with Supabase Auth, then calls the protected
+`reserve_generation()` function. That function atomically reserves 10 credits and inserts a
+`queued` job, preventing the browser from changing a user's balance or identity. Audio upload
+storage, Shotstack rendering, and job polling remain separate follow-up steps.

@@ -22,7 +22,7 @@
 ## Phase 2: Core generation flow
 - [ ] Add upload state and file handling
 - [ ] Create the generation request flow
-- [ ] Add credit checks and decrement logic
+- [x] Add credit checks and decrement logic
 - [ ] Implement a mock or queued generation state
 - [ ] Build the result page and final asset view
 - [ ] Add basic loading and success/error UI states
@@ -56,5 +56,5 @@
 - [ ] Anonymous user can upload
 - [x] User hits generate and sees signup gate
 - [ ] User signs up successfully
-- [ ] Credits are checked and reduced
+- [x] Credits are checked and reduced
 - [ ] Generation completes in mock or queued flow
