@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import posthog from 'posthog-js';
+import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { GENERATION_COST, isTerminal, RENDER_STAGES } from '@/lib/jobs';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
@@ -49,6 +50,7 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
 
     setSelectedFile(file);
     setErrorMessage('');
+    track('file_uploaded', { source: 'workspace', size: file.size, type: file.type });
   };
 
   const handleSignOut = async () => {
@@ -72,6 +74,7 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
 
     setErrorMessage('');
     setIsSubmitting(true);
+    track('cta_clicked', { cta: 'generate', source: 'workspace', signed_in: true });
 
     try {
       const response = await fetch('/api/jobs', {

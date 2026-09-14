@@ -2,6 +2,7 @@
 
 import { ChangeEvent, KeyboardEvent, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { useAppStore } from '@/store/use-app-store';
 import styles from './upload-panel.module.css';
@@ -43,6 +44,7 @@ export function UploadPanel({ isSignedIn }: UploadPanelProps) {
 
     setSelectedFile(file);
     setErrorMessage('');
+    track('file_uploaded', { source: 'landing', size: file.size, type: file.type });
   };
 
   const handlePickFile = () => {
@@ -59,6 +61,7 @@ export function UploadPanel({ isSignedIn }: UploadPanelProps) {
   const handlePrimaryAction = () => {
     if (!isUploadOpen) {
       setUploadOpen(true);
+      track('tool_opened', { source: 'landing' });
       return;
     }
 
@@ -73,6 +76,8 @@ export function UploadPanel({ isSignedIn }: UploadPanelProps) {
   // Generate is the conversion gate, so signed-out users land on the sign up tab.
   const handleGenerateClick = () => {
     if (!selectedFile) return;
+
+    track('cta_clicked', { cta: 'generate', source: 'landing', signed_in: isSignedIn });
 
     if (isSignedIn) {
       router.push('/generate');

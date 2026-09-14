@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { useAppStore } from '@/store/use-app-store';
 import styles from './free-tool.module.css';
@@ -18,6 +19,10 @@ export function FreeTool({ isSignedIn }: FreeToolProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isConverting, setIsConverting] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    track('tool_opened', { source: 'mp3-to-mp4' });
+  }, []);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
@@ -38,6 +43,7 @@ export function FreeTool({ isSignedIn }: FreeToolProps) {
     setSelectedFile(file);
     setVideoUrl(null);
     setErrorMessage('');
+    track('file_uploaded', { source: 'mp3-to-mp4', size: file.size, type: file.type });
   };
 
   const handleConvert = async () => {
@@ -60,6 +66,7 @@ export function FreeTool({ isSignedIn }: FreeToolProps) {
       }
 
       setVideoUrl(result.videoUrl);
+      track('processing_done', { source: 'mp3-to-mp4' });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Could not convert the file.');
     } finally {
@@ -69,6 +76,8 @@ export function FreeTool({ isSignedIn }: FreeToolProps) {
 
   // The full render is the conversion gate. The selected file stays in the store across sign up.
   const handleGenerate = () => {
+    track('cta_clicked', { cta: 'generate', source: 'mp3-to-mp4', signed_in: isSignedIn });
+
     if (isSignedIn) {
       router.push('/generate');
       return;

@@ -52,7 +52,7 @@
 
 ## Phase 6: PostHog analytics
 - [x] Add PostHog to the app with pageviews and user identification
-- [ ] Track landing and upload events
+- [x] Track landing and upload events
 - [ ] Track signup flow events
 - [ ] Track generation attempts and credit usage
 - [ ] Track completion and result events
