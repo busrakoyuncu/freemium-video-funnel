@@ -92,6 +92,16 @@
   color: rgba(241, 233, 219, 0.82);
 }
 
+.notice {
+  margin-top: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  background: rgba(30, 23, 18, 0.7);
+  color: var(--error);
+  font-size: 0.9rem;
+}
+
 .heroLink {
   margin-top: 1.5rem;
   color: rgba(241, 233, 219, 0.72);

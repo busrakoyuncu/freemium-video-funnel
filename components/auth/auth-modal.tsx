@@ -100,6 +100,7 @@ export function AuthModal() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: { emailRedirectTo: `${window.location.origin}/auth/confirm?next=/generate` },
         });
 
         if (error) {
@@ -195,7 +196,7 @@ export function AuthModal() {
         <div className={styles.modalFields}>
           {showSignupReminder ? (
             <span className={styles.passwordMismatch} role="status">
-              Make sure you confirm the mail address.
+              Check your inbox and open the confirmation link in this browser. It signs you in and takes you to the workspace.
             </span>
           ) : null}
 

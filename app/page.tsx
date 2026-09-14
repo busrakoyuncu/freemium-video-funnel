@@ -5,7 +5,12 @@ import { UploadPanel } from '@/components/features/upload-panel';
 import { getSupabaseServerClient } from '@/lib/supabase/server-client';
 import styles from './page.module.css';
 
-export default async function Home() {
+type HomeProps = {
+  searchParams: Promise<{ auth?: string }>;
+};
+
+export default async function Home({ searchParams }: HomeProps) {
+  const { auth } = await searchParams;
   const supabase = await getSupabaseServerClient();
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
   const isSignedIn = Boolean(user);
@@ -47,6 +52,12 @@ export default async function Home() {
           Upload your idea, choose a style, and generate a polished video in
           minutes.
         </p>
+
+        {auth === 'confirm-failed' ? (
+          <p className={styles.notice} role="alert">
+            That confirmation link did not work. Open it in the browser you signed up with, or sign in if you already confirmed.
+          </p>
+        ) : null}
 
         <UploadPanel isSignedIn={isSignedIn} />
 
