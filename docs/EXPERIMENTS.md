@@ -34,14 +34,14 @@ One change per experiment. If the variant differs in two ways, a win teaches not
 
 ### 2.6 Implement behind a feature flag
 The experiment creates a PostHog feature flag with the variants. Code reads the flag and renders the matching variant. Conventions for this project:
-- Flag keys are kebab-case, `surface-what`: `landing-cta`, `free-tool-upgrade-copy`.
+- Flag keys are kebab-case, `surface-what`: `landing-cta-copy`, `free-tool-upgrade-copy`.
 - Read the flag through `hooks/use-experiment.ts`, which returns `control` until PostHog has answered, so users never see a variant flicker into another.
 - Read the flag only where the variant is visible. PostHog records an exposure event (`$feature_flag_called`) the moment the flag is read, and exposures on pages where the change is not shown dilute the result.
 - Keep the flag in one component. Spreading a flag across files is how it never gets removed.
 - Never put an experiment on anything that moves credits or money without a guardrail on refunds and failures.
 
 ### 2.7 QA both variants
-Before launch, force each variant in your own browser and walk the funnel. Use the PostHog toolbar (Settings, Project, Authorized URLs must include the site) or `posthog.featureFlags.overrideFeatureFlags({ 'landing-cta': 'test' })` in the console. Confirm the exposure event and the metric events arrive under the right variant in Activity.
+Before launch, force each variant in your own browser and walk the funnel. Use the PostHog toolbar (Settings, Project, Authorized URLs must include the site) or `posthog.featureFlags.overrideFeatureFlags({ 'landing-cta-copy': 'test' })` in the console. Confirm the exposure event and the metric events arrive under the right variant in Activity.
 
 ### 2.8 Launch in the right order
 Deploy the code first. Then start the experiment in PostHog. If the experiment starts first, the flag is evaluated by code that does not know it yet, and the first exposures are wasted.
@@ -69,7 +69,7 @@ With the traffic a demo gets, most tests will not reach significance. That is fi
 
 | # | Name | Flag | Primary metric | Status | Result | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Landing CTA copy | `landing-cta` | tool_opened, source = landing | draft in PostHog, code ready | | |
+| 1 | Landing CTA copy | `landing-cta-copy` | tool_opened, source = landing | running since 2026-09-14 | | |
 
 ## 5. Experiment 1: Landing CTA copy
 
@@ -83,8 +83,8 @@ With the traffic a demo gets, most tests will not reach significance. That is fi
 
 **Size and duration.** Minimum detectable effect 15% relative. PostHog's estimate at launch decides the visitors needed; run for at least one full week regardless.
 
-**Implementation.** `UploadPanel` reads `landing-cta` through `useExperiment`. Exposure happens on landing pageview, where the button is visible.
+**Implementation.** `UploadPanel` reads `landing-cta-copy` through `useExperiment`. Exposure happens on landing pageview, where the button is visible.
 
-**QA.** Force `test` in the toolbar, confirm the label, open the panel, check Activity shows `$feature_flag_called` with `landing-cta = test` and then `tool_opened`.
+**QA.** Force `test` in the toolbar, confirm the label, open the panel, check Activity shows `$feature_flag_called` with `landing-cta-copy = test` and then `tool_opened`.
 
 **Decision rule.** Ship if the primary lift is positive with at least 90% probability and no guardrail drops. Otherwise kill and log.

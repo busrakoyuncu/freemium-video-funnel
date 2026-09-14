@@ -16,7 +16,7 @@ export function UploadPanel({ isSignedIn }: UploadPanelProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   // Experiment 1 in docs/EXPERIMENTS.md: hero button copy.
-  const ctaVariant = useExperiment('landing-cta');
+  const ctaVariant = useExperiment('landing-cta-copy');
   const {
     isUploadOpen,
     setUploadOpen,

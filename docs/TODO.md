@@ -60,9 +60,9 @@
 - [x] Build the funnel insights in PostHog (free tool to render, free conversion, workspace render, signup to render)
 
 ## Phase 7: Experiments
-- [ ] Create the "Landing CTA copy" experiment in PostHog with flag key landing-cta
+- [x] Create the "Landing CTA copy" experiment in PostHog with flag key landing-cta-copy
 - [x] Add useExperiment and read the flag in UploadPanel
-- [ ] QA both variants, deploy, then launch the experiment
+- [x] QA both variants, deploy, then launch the experiment (launched 2026-09-14)
 - [ ] Log the result in docs/EXPERIMENTS.md and remove the flag
 
 ## Phase 8: Tests
