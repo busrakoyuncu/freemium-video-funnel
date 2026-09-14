@@ -61,7 +61,7 @@
 
 ## Phase 7: Experiments
 - [ ] Create the "Landing CTA copy" experiment in PostHog with flag key landing-cta
-- [ ] Add useExperiment and read the flag in UploadPanel
+- [x] Add useExperiment and read the flag in UploadPanel
 - [ ] QA both variants, deploy, then launch the experiment
 - [ ] Log the result in docs/EXPERIMENTS.md and remove the flag
 

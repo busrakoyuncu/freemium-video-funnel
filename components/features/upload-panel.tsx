@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { useAppStore } from '@/hooks/use-app-store';
+import { useExperiment } from '@/hooks/use-experiment';
 import styles from './upload-panel.module.css';
 
 type UploadPanelProps = {
@@ -14,6 +15,8 @@ type UploadPanelProps = {
 export function UploadPanel({ isSignedIn }: UploadPanelProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  // Experiment 1 in docs/EXPERIMENTS.md: hero button copy.
+  const ctaVariant = useExperiment('landing-cta');
   const {
     isUploadOpen,
     setUploadOpen,
@@ -88,7 +91,9 @@ export function UploadPanel({ isSignedIn }: UploadPanelProps) {
   };
 
   const primaryLabel = !isUploadOpen
-    ? 'Start creating video'
+    ? ctaVariant === 'test'
+      ? 'Try it free'
+      : 'Start creating video'
     : isSignedIn
       ? 'Open workspace'
       : 'Sign up / Sign in';

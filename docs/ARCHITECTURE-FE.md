@@ -43,3 +43,5 @@ PostHog is initialized once in `instrumentation-client.ts` when a key is set, wi
 - Share link in the credits modal: cta_clicked with `cta = share_to_earn`
 
 Server events come from the API routes; see [ARCHITECTURE-BE.md](ARCHITECTURE-BE.md).
+
+Experiments read their PostHog flag through `hooks/use-experiment.ts`, which returns `control` until the flags have loaded. The process and the log are in [EXPERIMENTS.md](EXPERIMENTS.md).

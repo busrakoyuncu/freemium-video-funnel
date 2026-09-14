@@ -69,7 +69,7 @@ With the traffic a demo gets, most tests will not reach significance. That is fi
 
 | # | Name | Flag | Primary metric | Status | Result | Decision |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | Landing CTA copy | `landing-cta` | tool_opened, source = landing | designed | | |
+| 1 | Landing CTA copy | `landing-cta` | tool_opened, source = landing | draft in PostHog, code ready | | |
 
 ## 5. Experiment 1: Landing CTA copy
 
