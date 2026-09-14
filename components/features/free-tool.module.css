@@ -1,0 +1,187 @@
+.page {
+  min-height: 100vh;
+  padding: 0 1.25rem 3rem;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 0;
+}
+
+.brand {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.topLink {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.6rem 1rem;
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.card {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 760px;
+  margin: 2rem auto 0;
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--panel);
+}
+
+.card h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  letter-spacing: -0.05em;
+}
+
+.freeTag {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  background: rgba(215, 155, 70, 0.14);
+  color: var(--amber);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lead,
+.upgrade p {
+  margin: 0;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.eyebrow {
+  color: var(--dim);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.9rem;
+  background: var(--panel-2);
+}
+
+.fileDetails {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.3rem;
+}
+
+.fileDetails strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileDetails span {
+  color: var(--dim);
+  font-size: 0.85rem;
+}
+
+.fileInput {
+  display: none;
+}
+
+.primaryButton,
+.secondaryButton {
+  flex: 0 0 auto;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.8rem 1.1rem;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.primaryButton {
+  border: 0;
+  background: var(--rust);
+  color: var(--ink-strong);
+}
+
+.primaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.secondaryButton {
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--ink);
+  font-size: 0.85rem;
+}
+
+.errorMessage {
+  margin: -0.5rem 0 0;
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+.result {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.resultVideo {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--bg);
+}
+
+.upgrade {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.upgrade p {
+  margin-top: 0.4rem;
+  max-width: 32rem;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .fileRow,
+  .upgrade {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
+    text-align: center;
+  }
+}

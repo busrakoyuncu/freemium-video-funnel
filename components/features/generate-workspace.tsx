@@ -106,6 +106,7 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
         <p className={styles.brandName}>freemium video funnel</p>
         <nav className={styles.nav} aria-label="Workspace navigation">
           <Link className={styles.navItemActive} href="/generate">Workspace</Link>
+          <Link className={styles.navItem} href="/mp3-to-mp4">Free tool</Link>
           <Link className={styles.navItem} href="/">Home</Link>
         </nav>
         <div className={styles.planCard}>

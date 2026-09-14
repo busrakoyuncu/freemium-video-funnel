@@ -49,6 +49,10 @@ export default async function Home() {
         </p>
 
         <UploadPanel isSignedIn={isSignedIn} />
+
+        <Link className={styles.heroLink} href="/mp3-to-mp4">
+          Or try the free MP3 to MP4 tool
+        </Link>
       </main>
 
       <AuthModal />

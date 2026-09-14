@@ -92,6 +92,14 @@
   color: rgba(241, 233, 219, 0.82);
 }
 
+.heroLink {
+  margin-top: 1.5rem;
+  color: rgba(241, 233, 219, 0.72);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+
 @media (max-width: 640px) {
   .topBar {
     padding: 1rem 1.2rem;
