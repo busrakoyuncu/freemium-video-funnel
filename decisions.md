@@ -125,3 +125,27 @@ be frozen right after responding. `signup_completed` fires in `/auth/confirm`, s
 confirmation on that is the moment signup is actually complete. If confirmation is ever turned
 off, the modal's direct-session path needs the same event. Without a PostHog key, every call is
 a no-op so the app runs unchanged.
+
+## Funnels: the main funnel starts at the tool, on purpose
+
+The "Free tool to render" funnel begins with `tool_opened`, so an account that signs up from
+the header and renders straight away is not counted in it. That is intended: the PRD's question
+is whether the free tool converts, and header signups are a different path. They are covered by
+the separate "Signup to render" funnel. A "Workspace render" funnel filtered to
+`source = workspace` measures whether signed-in users who click Generate get a video.
+
+Render stages are not sent to PostHog. The mock derives the stage from the job age per poll and
+can jump over stages, which would show as false drop-offs. Failed versus finished renders are
+already visible from `job_failed` and `job_completed`. Stage events can be added when a real
+render service makes them meaningful, and the settle point in the status route is the one place
+to do it.
+
+## Tests: routes and logic, one smoke test, no more
+
+Vitest unit tests cover the pure functions in `lib/`, and route tests call the exported
+handlers with the Supabase client module mocked, so the credit rules the app enforces (401,
+422, 501, 402, refund fallback) are pinned without a database. One Playwright smoke test runs
+the signed-in render once the app is deployed, because that is the test that catches a broken
+env var or dashboard setting. The SQL functions are left to manual verification: pgTAP needs a
+local Supabase stack, which is more setup than a demo warrants. Component and snapshot tests are
+skipped because they break on UI changes without protecting the funnel.

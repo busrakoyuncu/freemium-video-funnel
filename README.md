@@ -72,6 +72,8 @@ The database is intentionally small. Only these tables are in scope:
 
 PostHog is wired in. Set `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` (EU projects use `https://eu.i.posthog.com`) and events appear under Activity. Browser events fire from handlers through `lib/analytics.ts`; server events fire from the API routes through `lib/analytics-server.ts`. Both use the Supabase user id as the person id, so one user's events line up across browser and server.
 
+Four funnel insights exist in the PostHog project: "Free tool to render" (the main one below), "Free conversion", "Workspace render", and "Signup to render". They are built from the events listed here and need no code to change.
+
 The analytics layer is centered on the funnel:
 
 tool_opened -> file_uploaded -> cta_clicked -> signup_completed -> job_created -> job_completed
@@ -133,7 +135,19 @@ Signup asks Supabase to send the user back to `/auth/confirm`, which exchanges t
 
 Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode.
 
-Not yet: audio upload storage, Shotstack rendering, the PostHog funnel insight, the out-of-credits modal, tests. See [TODO.md](TODO.md).
+Not yet: audio upload storage, Shotstack rendering, the out-of-credits modal, tests. See [TODO.md](TODO.md).
+
+## Testing
+
+Planned scope, kept small on purpose:
+
+- Vitest unit tests for the pure logic in `lib/` (file validation, mock stage timing).
+- Vitest route tests that call the exported handlers directly with the Supabase client mocked, covering 401, 422, 501, 402, the happy path, and the refund fallback.
+- One Playwright smoke test after deploy: a seeded account renders a video and ends at 40 credits.
+
+The SQL functions are not tested automatically. They are small, were verified live, and testing them needs a local Supabase stack. No component or snapshot tests.
+
+Run with `npm test` once the suite exists.
 
 ## Notes
 

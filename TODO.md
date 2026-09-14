@@ -56,11 +56,16 @@
 - [x] Track signup flow events
 - [x] Track generation attempts and credit usage
 - [x] Track completion and result events
-- [ ] Build the funnel insight in PostHog and review the data
+- [x] Build the funnel insights in PostHog (free tool to render, free conversion, workspace render, signup to render)
 
-## Phase 7: QA and polish
-- [ ] Test the full funnel end-to-end
-- [ ] Add a few core tests for the API routes and the credit functions
+## Phase 7: Tests
+- [ ] Add Vitest with an `npm test` script
+- [ ] Unit tests for `lib/audio-file.ts` and `lib/jobs.ts`
+- [ ] Route tests for /api/jobs, /api/jobs/[id], and /api/convert with the Supabase client mocked
+- [ ] One Playwright smoke test at deploy time: seeded account, generate, done, credits 40
+
+## Phase 8: QA and polish
+- [ ] Test the full funnel end-to-end by hand
 - [ ] Check auth and session edge cases
 - [ ] Fix UX issues and polish the flow
 - [ ] Validate production environment variables
