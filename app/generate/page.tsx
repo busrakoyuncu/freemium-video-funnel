@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { formatFileSize, isValidAudioFile, MAX_FILE_SIZE_BYTES } from '@/lib/audio-file';
+import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { useAppStore } from '@/store/use-app-store';
 import styles from './page.module.css';
 
@@ -41,16 +41,11 @@ export default function GeneratePage() {
       return;
     }
 
-    if (!isValidAudioFile(file)) {
-      setSelectedFile(null);
-      setErrorMessage('Please upload a valid audio file: MP3, WAV, or M4A.');
-      event.target.value = '';
-      return;
-    }
+    const validationError = validateAudioFile(file);
 
-    if (file.size > MAX_FILE_SIZE_BYTES) {
+    if (validationError) {
       setSelectedFile(null);
-      setErrorMessage('The selected file is too large. Please choose a file under 25 MB.');
+      setErrorMessage(validationError);
       event.target.value = '';
       return;
     }

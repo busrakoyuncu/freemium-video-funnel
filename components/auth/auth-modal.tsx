@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/use-app-store';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import styles from '@/app/page.module.css';
+import styles from './auth-modal.module.css';
 
 export function AuthModal() {
   const router = useRouter();

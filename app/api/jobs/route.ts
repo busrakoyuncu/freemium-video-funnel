@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-
-const MAX_FILE_SIZE_BYTES = 25 * 1024 * 1024;
-const ACCEPTED_AUDIO_TYPES = new Set([
-  'audio/mpeg',
-  'audio/wav',
-  'audio/mp4',
-  'audio/x-m4a',
-  'audio/aac',
-]);
-const ACCEPTED_AUDIO_EXTENSIONS = new Set(['mp3', 'wav', 'm4a', 'aac']);
+import { isAcceptedAudio, MAX_FILE_SIZE_BYTES } from '@/lib/audio-file';
 
 export async function POST(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -70,12 +61,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid audio file.' }, { status: 422 });
   }
 
-  const extension = name.split('.').pop()?.toLowerCase();
-  const isAcceptedAudio =
-    ACCEPTED_AUDIO_TYPES.has(type) ||
-    (extension !== undefined && ACCEPTED_AUDIO_EXTENSIONS.has(extension));
-
-  if (!isAcceptedAudio) {
+  if (!isAcceptedAudio(name, type)) {
     return NextResponse.json({ error: 'Invalid audio file.' }, { status: 422 });
   }
 
