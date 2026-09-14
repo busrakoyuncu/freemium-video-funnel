@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAcceptedAudio, MAX_FILE_SIZE_BYTES } from '@/lib/audio-file';
+import { isMockRender } from '@/lib/jobs';
 import { getSupabaseServerClient } from '@/lib/supabase/server-client';
 
 export async function POST(request: NextRequest) {
@@ -56,6 +57,14 @@ export async function POST(request: NextRequest) {
 
   if (!isAcceptedAudio(name, type)) {
     return NextResponse.json({ error: 'Invalid audio file.' }, { status: 422 });
+  }
+
+  // Real rendering is not connected yet. Refuse before reserving credits.
+  if (!isMockRender()) {
+    return NextResponse.json(
+      { error: 'Rendering is not available. Set MOCK_RENDER=true to use the mock flow.' },
+      { status: 501 },
+    );
   }
 
   const { data: jobId, error: reservationError } = await supabase.rpc('reserve_generation');

@@ -251,6 +251,86 @@
   opacity: 0.5;
 }
 
+.stages {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stage,
+.stageActive,
+.stageDone {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--dim);
+  font-size: 0.9rem;
+}
+
+.stage::before,
+.stageActive::before,
+.stageDone::before {
+  content: '';
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.stageActive {
+  color: var(--ink);
+}
+
+.stageActive::before {
+  border-color: var(--rust);
+  background: var(--rust);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.stageDone {
+  color: var(--amber);
+}
+
+.stageDone::before {
+  border-color: var(--amber);
+  background: var(--amber);
+}
+
+.renderNote {
+  margin: 0;
+  color: var(--dim);
+  font-size: 0.9rem;
+}
+
+.result {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.resultVideo {
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--bg);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stageActive::before {
+    animation: none;
+  }
+}
+
 @media (max-width: 760px) {
   .workspace {
     display: block;
