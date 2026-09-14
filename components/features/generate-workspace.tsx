@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import posthog from 'posthog-js';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { GENERATION_COST, isTerminal, RENDER_STAGES } from '@/lib/jobs';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
@@ -57,6 +58,8 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
       await supabase.auth.signOut();
     }
 
+    // The next visitor in this browser must not inherit this user's identity.
+    if (posthog.__loaded) posthog.reset();
     setSelectedFile(null);
     router.push('/');
     router.refresh();

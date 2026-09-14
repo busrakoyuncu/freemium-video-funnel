@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { IdentifyUser } from '@/components/analytics/identify-user';
 import { GenerateWorkspace } from '@/components/features/generate-workspace';
 import { getSupabaseServerClient } from '@/lib/supabase/server-client';
 
@@ -19,5 +20,10 @@ export default async function GeneratePage({ searchParams }: GeneratePageProps) 
     supabase.from('profiles').select('credits').eq('user_id', user.id).single<{ credits: number }>(),
   ]);
 
-  return <GenerateWorkspace credits={profile?.credits ?? 0} jobId={job ?? null} />;
+  return (
+    <>
+      <IdentifyUser userId={user.id} email={user.email} />
+      <GenerateWorkspace credits={profile?.credits ?? 0} jobId={job ?? null} />
+    </>
+  );
 }

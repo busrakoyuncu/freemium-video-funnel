@@ -36,7 +36,7 @@
 - [x] Protect /generate server-side
 - [x] Add the /auth/confirm route for the confirmation email
 - [ ] Set the Site URL and Redirect URLs in the Supabase dashboard
-- [ ] Verify signup, email confirmation, and session persistence with a real account
+- [x] Verify signup, email confirmation, and session persistence with a real account
 
 ## Phase 4: Free tool
 - [x] Build the /mp3-to-mp4 page
@@ -51,7 +51,7 @@
 - [ ] Pick the static cover image for the free conversion
 
 ## Phase 6: PostHog analytics
-- [ ] Add PostHog to the app
+- [x] Add PostHog to the app with pageviews and user identification
 - [ ] Track landing and upload events
 - [ ] Track signup flow events
 - [ ] Track generation attempts and credit usage
@@ -69,6 +69,6 @@
 ## First milestone target
 - [x] Anonymous user can upload
 - [x] User hits generate and sees signup gate
-- [ ] User signs up successfully (built, needs a live check)
+- [x] User signs up successfully
 - [x] Credits are checked and reduced
-- [x] Generation completes in the mock flow (built, needs a live check)
+- [x] Generation completes in the mock flow
