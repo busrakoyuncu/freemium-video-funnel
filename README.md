@@ -135,9 +135,41 @@ Signup asks Supabase to send the user back to `/auth/confirm`, which exchanges t
 
 ## Current status
 
-Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode.
+Live at https://freemium-video-funnel.vercel.app, deployed from `main` by Vercel.
 
-Not yet: audio upload storage, Shotstack rendering, the Playwright smoke test. See [docs/TODO.md](docs/TODO.md).
+Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode, share-to-earn credits, PostHog funnels, one running A/B test.
+
+Not yet: audio upload storage, Shotstack rendering, the Playwright smoke test, custom SMTP for Supabase emails. See [docs/TODO.md](docs/TODO.md).
+
+## A/B testing
+
+Experiments run through PostHog. The process, the conventions, and the log of every test are in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md). In short:
+
+1. An experiment in PostHog creates a feature flag with two variants, `control` and `test`, and assigns each visitor to one at random. The assignment is stored in the browser, so a visitor always sees the same variant.
+2. The code asks PostHog for the visitor's variant through `hooks/use-experiment.ts` and renders the matching version. Until PostHog answers, it renders `control`, so nothing flickers. Asking for the flag also records the exposure that results are counted against.
+3. PostHog compares the primary metric between the two groups and reports the lift and how confident it is.
+
+### The running experiment: `landing-cta-copy`
+
+The only thing that changes is the text of the big button under the landing page headline:
+
+| Group | Button text | Share of visitors |
+| --- | --- | --- |
+| `control` | Start creating video (the original) | 50% |
+| `test` | Try it free | 50% |
+
+Everything else is the same for both groups: the page, the upload panel that opens, the label the button shows after the panel is open, the signup gate, and the workspace. The switch lives in one place, `components/features/upload-panel.tsx`, where the button label is picked from the variant that `useExperiment('landing-cta-copy')` returns.
+
+What is measured: how many visitors in each group open the upload panel (`tool_opened` from the landing page). Secondary: how many go on to click Generate. Running since 2026-09-14. When it ends, the winning text becomes the only one, the flag is removed from the code, and the result is written in the experiment log.
+
+## Deploying
+
+Vercel builds every push to `main`. Two things that are easy to get wrong:
+
+- Environment variables whose name starts with `NEXT_PUBLIC_` must be created as type **Config** in Vercel. A **Secret** is kept out of the browser bundle even with the public prefix, which silently disables PostHog.
+- After changing the production URL, update Supabase (Authentication, URL Configuration: Site URL and a `/**` entry in Redirect URLs), or confirmation links stop landing on `/auth/confirm`.
+
+Supabase's built-in email sender allows only a few confirmation emails per hour. Connect custom SMTP (Authentication, Emails, SMTP Settings) before showing the demo to a group.
 
 ## Testing
 

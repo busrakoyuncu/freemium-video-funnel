@@ -71,12 +71,15 @@
 - [x] Route tests for /api/jobs, /api/jobs/[id], and /api/convert with the Supabase client mocked
 - [ ] One Playwright smoke test at deploy time: seeded account, generate, done, credits 40
 
-## Phase 9: QA and polish
-- [ ] Test the full funnel end-to-end by hand
+## Phase 9: Deploy
+- [x] Deploy to Vercel (https://freemium-video-funnel.vercel.app, auto-deploys from main)
+- [x] Set production env vars (NEXT_PUBLIC_ ones as type Config, not Secret)
+- [x] Add the production URL to Supabase Site URL and Redirect URLs
+- [x] Test the full funnel end-to-end by hand on the live site
+- [ ] Add your own emails to PostHog's internal and test users filter
+- [ ] Connect custom SMTP in Supabase to lift the confirmation email rate limit
 - [ ] Check auth and session edge cases
 - [ ] Fix UX issues and polish the flow
-- [ ] Validate production environment variables
-- [ ] Deploy to Vercel
 
 ## First milestone target
 - [x] Anonymous user can upload

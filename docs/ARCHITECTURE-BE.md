@@ -55,4 +55,4 @@ Server events go through `trackServer()` in `lib/analytics-server.ts`. It create
 | SHOTSTACK_API_KEY | Server only | Real rendering | Planned |
 | NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST | Public | Analytics, also used by the server helper | Optional, events skipped without them |
 
-`.env.example` lists them. The service role and Shotstack keys must never be prefixed with NEXT_PUBLIC_.
+`.env.example` lists them. The service role and Shotstack keys must never be prefixed with NEXT_PUBLIC_. On Vercel, the NEXT_PUBLIC_ variables must be type Config; a Secret is excluded from the browser bundle even with the public prefix.

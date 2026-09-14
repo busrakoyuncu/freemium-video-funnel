@@ -174,3 +174,13 @@ The first test changes only the landing hero copy, because it sits at the top of
 the metric already exists, and a one-string change keeps the focus on proving the mechanics.
 With demo traffic the result will rarely be significant; the point of the first run is that
 flag, exposure, and result all line up.
+
+## Deployment: Vercel from main, one Supabase project for all environments
+
+The app deploys from `main` on Vercel, with Preview builds sharing the same Supabase project
+and PostHog project as Production. That keeps one set of migrations and one funnel to look at,
+at the cost of preview traffic mixing into the numbers; acceptable for a demo. Two lessons
+recorded from the first deploy: Vercel keeps Secret-type variables out of the browser bundle
+even when their name starts with NEXT_PUBLIC_, so public keys must be Config; and Supabase's
+built-in email sender is rate limited to a few messages per hour, so custom SMTP is needed
+before the demo is shown to a group.
