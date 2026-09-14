@@ -2,7 +2,7 @@
 
 This is the visual direction for the product described in [PRD.md](../PRD.md). The goal is to mirror the feel of the reference, but tune it for this freemium AI video funnel. The reference is a premium creator dashboard. The product should feel the same: dark, calm, confident, and warm.
 
-The mockup at [docs/mockup.html](mockup.html) is the source of truth for the values below. When the doc and the mockup disagree, update the doc.
+The token values below live in `app/globals.css` and are the source of truth. When this doc and the stylesheet disagree, update the doc.
 
 ## 1. DESIGN GOAL
 The product should feel like a creative workspace, not a generic SaaS page. The reference has a dark base, a narrow left rail, tool-like actions, and a strong top-right utility area with a credit value. We should keep that structure and adapt the palette to warm autumn tones.
@@ -50,7 +50,9 @@ These are the values used in the mockup. Expose them as CSS variables or Mantine
 | rust (primary action) | #b85c33 | #a24a25 |
 | amber (highlight, credits, progress) | #d79b46 | #9c6a1f |
 
-Light mode is not a plain inversion. Rust and amber are darkened one step so they keep contrast as text on ivory. Everything else keeps the same role.
+Light mode is not a plain inversion. Rust and amber are darkened one step so they keep contrast as text on ivory. Everything else keeps the same role. Light mode is not implemented yet; only the dark column exists in the stylesheet.
+
+Four helper tokens exist alongside the palette: `ink-strong` (#fff9f4) for text on rust, `rust-2` (#c96c44) as the gradient end on primary buttons, `bronze` (#795025) for hover borders and the file icon, and `error` (#f1b3a7) for validation text.
 
 ### Status colors
 Semantic color stays inside the brown family. There is no green, blue, or bright red.
@@ -148,15 +150,14 @@ The mockup covers the first and third moments. The signup-before-render modal is
 
 The top-right credit value should be a visual anchor. It should feel like a live product metric, not a decoration. The whole interface should make the user feel that the system is active, premium, and ready to create.
 
-Brand name: the mockup uses "Ember" as a placeholder mark. This is not final and should be confirmed before the landing page is built.
+Brand name: the app uses "freemium video funnel" and the "fv" mark as placeholders. This is not final.
 
 ## 10. BROWSER PREVIEW LINKS
 Local app preview:
 - http://localhost:3000
 
-Final mockup preview:
+Reference mockup (external, the local copy was removed):
 - https://claude.ai/code/artifact/02c7f139-ef8a-4984-8a82-e24d2e57c83a
-- source: [docs/mockup.html](mockup.html), open it directly in a browser
 
 Related docs:
 - [PRD.md](../PRD.md)

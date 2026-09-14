@@ -13,23 +13,23 @@ This means the funnel becomes free tool usage first, then a clear signup gate be
 Every important step fires an analytics event. This includes tool use, file upload, signup completion, job creation, and job completion.
 
 ## 3. PAGES
-- / : landing page. It links to the tool and to signup login.
-- /mp3-to-mp4 : free tool. It does not require login. It includes a Mantine dropzone, a processing state, and a result card. If a user is signed out and has a song ready, the Generate video button opens a signup-before-render flow instead of starting the paid render immediately.
-- /signup and /login : Supabase Auth pages. They use email and password only.
-- /generate : protected by middleware. The page shows a start render button, job status stages, and the final result video. Credits are shown in the header. The job id is kept in the URL query string so refresh does not lose progress.
+- / : landing page with a hero, an upload panel, and a link to the free tool. Signed-in users see a link to the workspace.
+- /mp3-to-mp4 : free tool. It does not require login. It has a file picker, a converting state, and a result card. If a user is signed out and has a song ready, the Generate video button opens the signup modal instead of starting the paid render.
+- Sign up and sign in happen in one shared modal, email and password only. There are no separate auth pages. Signup sends a confirmation email; the link signs the user in and opens /generate.
+- /generate : protected server-side by proxy.ts. The page shows a start render button, job status stages, and the final result video. Credits are shown in the sidebar and header from the real balance. The job id is kept in the URL query string so refresh does not lose progress.
 
 The flow is intentionally simple. The app does not need a full marketing site or dashboard. It only needs enough pages to show the funnel clearly.
 
 ## 4. BACKEND (Next.js API routes)
-- POST /api/convert : Free conversion. It turns audio and a static cover image into an MP4 through the Shotstack sandbox.
-- POST /api/jobs : Requires a valid session. It reserves 10 credits, creates a job record, then starts a Shotstack render. It returns the job id.
+- POST /api/convert : Free conversion. It will turn audio and a static cover image into an MP4 through the Shotstack sandbox. Today it runs in mock mode only.
+- POST /api/jobs : Requires a valid session. It reserves 10 credits and creates a job record, then returns the job id. The Shotstack render call is not connected yet.
 - GET /api/jobs/[id] : Requires a valid session. It only returns data for the owner of the job. It returns the job status and the video url when complete.
 
 Credits work as a deferred ledger. On create, the app reserves 10 credits. On success, the credits are committed. On failure, the credits are refunded. This keeps the balance consistent.
 
-Auth is server-side only. All routes read the Supabase session server-side and use user.id. The app never trusts a client-sent user id.
+Auth is server-side only. Sessions are cookies. All routes read the Supabase session server-side and use user.id. The app never trusts a client-sent user id.
 
-The app has a MOCK_RENDER=true flag. In that mode, it does not call Shotstack. It simulates render stages with timers. It still writes job records to the database so the full flow can be tested end-to-end.
+The app has a MOCK_RENDER=true flag. In that mode, it does not call Shotstack. It derives the render stage from the job age on each status poll. It still writes job records to the database so the full flow can be tested end-to-end. With the flag off, the routes refuse to start a render until Shotstack is connected.
 
 If a user is out of credits, the action should not be disabled. Instead, the start button can proceed to a modal. The modal explains that they need more credits and offers a path to earn 50 credits by sharing previous videos on social media and tagging the brand.
 
@@ -74,18 +74,16 @@ tool_opened -> file_uploaded -> cta_clicked -> signup_completed -> job_created -
 This funnel is the centerpiece of the demo. It lets the team see whether the free tool is converting into paid behavior and whether the upgrade path is working. The key change is that the signup step happens before the paid generation action begins.
 
 ## 7. STACK
-The app uses Next.js App Router with TypeScript. It uses Mantine for UI, not Tailwind. It uses Supabase for auth and database. It uses Shotstack sandbox for video rendering. It uses PostHog for analytics. It is deployed on Vercel.
+The app uses Next.js App Router with TypeScript. It uses CSS Modules with a small token set, no UI library and no Tailwind. A small Zustand store carries the upload draft across the signup gate. It uses Supabase for auth and database. It will use Shotstack sandbox for video rendering and PostHog for analytics. It is deployed on Vercel.
 
 The shared UI lives in components/. Each repeated element gets a single reusable component. This keeps the demo clean and easy to extend.
 
 ## 8. OUT OF SCOPE
 The project does not include:
 - OAuth
-- email confirmation
 - password reset
 - profile page
 - payments
-- RLS policies
 - tests beyond a few core checks
 - any database table not listed above
 

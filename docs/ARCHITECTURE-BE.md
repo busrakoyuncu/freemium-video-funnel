@@ -1,43 +1,47 @@
-This is the backend implementation view of [../PRD.md](../PRD.md). It keeps the product rules and avoids extra infrastructure. The design should be clear, small, and easy to debug.
+This is the backend implementation view of [../PRD.md](../PRD.md). It describes what is built and marks what is still planned.
 
 ## 1. API ROUTES
-| Method | Path | Auth required | Request | Response | Errors |
+| Method | Path | Auth | Request | Response | Errors |
 | --- | --- | --- | --- | --- | --- |
-| POST | /api/convert | No | MP3 file and cover asset input | Converted MP4 result or processing status | 401 if session is required later, 422 bad file |
-| POST | /api/jobs | Yes | signed-in user, audio source, render request | job id and status | 401, 402 insufficient credits, 422 bad file |
-| GET | /api/jobs/[id] | Yes | valid job id from the session owner | current status, video_url when complete | 401, 404, 422 if request is malformed |
+| POST | /api/convert | No | multipart form with `file` | `{ videoUrl }` | 400 bad body, 422 bad file, 501 rendering not connected |
+| POST | /api/jobs | Yes | JSON `{ file: { name, size, type } }` | `{ jobId, status }` 201 | 401, 402 insufficient credits, 422 bad file, 501 rendering not connected |
+| GET | /api/jobs/[id] | Yes | job id in the path | `{ id, status, videoUrl }` | 401, 404 not found or not the owner |
 
-These routes are intentionally thin. They validate input, call the correct service, and return only the minimum needed for the UI. No large service layer is needed for a demo app.
+Routes validate input, call one database function, and return the minimum the UI needs. Audio bytes are not sent to /api/jobs yet, only metadata. Upload storage is planned (see section 4).
 
 ## 2. AUTH
-Use @supabase/ssr with cookie-based sessions. Middleware protects /generate and any route that needs a signed-in user. Each protected route must call supabase.auth.getUser() and use user.id from the server response.
+`@supabase/ssr` with cookie sessions. `lib/supabase/server-client.ts` builds a per-request client from the cookies. `proxy.ts` refreshes the session and redirects signed-out visitors away from /generate. Every protected route calls `supabase.auth.getUser()` and uses the returned id. The client never sends a user id.
 
-Never accept a user id from the client. The client can send a request, but the server owns the trust boundary. This keeps the app aligned with the PRD and avoids a common security mistake.
+Signup requires email confirmation. `signUp` passes `emailRedirectTo` pointing at `GET /auth/confirm`, so the default Supabase email lands there with a one-time `code`. The route exchanges it for a session cookie and redirects to `next`. It also accepts `token_hash` and `type` for a custom template. A bad or expired link redirects home with `?auth=confirm-failed`. Site URL and Redirect URLs must be set in the dashboard (see the README).
 
-## 3. JOB LIFECYCLE
-Jobs live in the jobs table with status stored in jobs.status. The state machine is queued -> rendering -> done or failed. The app moves the state in one place and keeps the status updates explicit.
+## 3. DATABASE
+Two tables, both with row-level security. Users can read their own rows only. All writes go through functions.
 
-In mock mode, a timer advances the job through the stages. In real mode, the app uses Shotstack status polling or a similar render lifecycle check. The app reserves 10 credits when the job is created, commits them when the job reaches done, and refunds them when the job reaches failed. Every transition should also emit an analytics event because the product is built around measuring funnel health and conversion quality.
+- `profiles`: user_id, email, credits (default 50), created_at. A trigger creates the row on signup and keeps email in sync.
+- `jobs`: id, user_id, status, video_url, created_at. Status is one of queued, rendering, voice_added, done, failed.
 
-## 4. STORAGE
-Uploads go to the public songs bucket in Supabase Storage. Keep the cap at 15 MB and allow mp3 files only. The app stores the file URL in the render request and sends that URL to Shotstack. The output video stays on the Shotstack CDN.
+Functions, all `security definer`:
 
-The Postgres jobs table stores only video_url. It does not store file bytes. The API routes do not proxy file streams. This keeps the database small, the app cheaper to operate, and the storage design easier to reason about.
+- `reserve_generation()`: callable by authenticated users. Deducts 10 credits when the balance allows it and inserts a queued job in one statement, so two clicks cannot overspend.
+- `settle_job(job_id, next_status, next_video_url)`: revoked from anon and authenticated, called only with the service-role key. Moves a non-terminal job forward and refunds 10 credits when the new status is failed. Terminal jobs are left alone.
 
-## 5. MOCK MODE
-When MOCK_RENDER=true, all Shotstack calls are skipped. The app advances the job with timers, writes real rows to the database, and returns a sample video url. The rest of the app should not know or care whether the render is mock or real.
+Migrations live in `supabase/migrations/` and are applied by hand in the SQL editor.
 
-This is the best way to build the full funnel quickly without blocking on external render behavior. It keeps the job API contract stable and makes local testing realistic.
+## 4. JOB LIFECYCLE AND MOCK MODE
+`MOCK_RENDER=true` is the only working mode today. With it off, both POST routes refuse with 501 before touching credits, because no renderer is connected.
 
-## 6. ENV VARS
-| Variable | Public or server only | Purpose |
-| --- | --- | --- |
-| NEXT_PUBLIC_SUPABASE_URL | Public | App URL for Supabase client setup |
-| NEXT_PUBLIC_SUPABASE_ANON_KEY | Public | Anonymous client access for non-sensitive flows |
-| SUPABASE_SERVICE_ROLE_KEY | Server only | Trusted server actions and admin reads/writes |
-| NEXT_PUBLIC_POSTHOG_KEY | Public | Browser analytics key |
-| NEXT_PUBLIC_POSTHOG_HOST | Public | PostHog host for browser tracking |
-| SHOTSTACK_API_KEY | Server only | Render service key for backend job creation |
-| MOCK_RENDER | Server only | Enables mock job flow for local testing |
+In mock mode, `GET /api/jobs/[id]` derives the stage from the job age (queued under 4 s, rendering under 10 s, voice added under 15 s, then done with a sample video). When the derived stage differs from the stored one, the route calls `settle_job` with the admin client. There are no timers or workers, so this survives serverless cold starts. The free tool's mock conversion just waits 1.5 s and returns the sample video.
 
-The Shotstack key must never be NEXT_PUBLIC_ because that would expose it to the browser. The production app should keep all external render credentials on the server only. This is a basic security rule and a performance and maintenance win.
+Planned real mode: the browser uploads audio to a public `songs` bucket (25 MB cap, audio only), the route sends the file URL to Shotstack, and status polling asks Shotstack and writes back through `settle_job`. The output stays on the Shotstack CDN and `jobs.video_url` stores the link.
+
+## 5. ENV VARS
+| Variable | Scope | Purpose | Status |
+| --- | --- | --- | --- |
+| NEXT_PUBLIC_SUPABASE_URL | Public | Supabase project URL | Required |
+| NEXT_PUBLIC_SUPABASE_ANON_KEY | Public | Anonymous key, safe with RLS | Required |
+| SUPABASE_SERVICE_ROLE_KEY | Server only | Calls `settle_job` | Required for the mock render |
+| MOCK_RENDER | Server only | Enables the mock flow | Required, must be `true` |
+| SHOTSTACK_API_KEY | Server only | Real rendering | Planned |
+| NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST | Public | Analytics | Planned |
+
+`.env.example` lists them. The service role and Shotstack keys must never be prefixed with NEXT_PUBLIC_.

@@ -5,38 +5,52 @@
 - [x] Review the frontend and backend architecture docs
 - [x] Set up the Next.js app shell and base styling
 - [x] Build the landing page and upload entry flow
-- [ ] Build the signed-out generate experience
+- [x] Build the signed-out generate experience
   - [x] keep the uploaded audio available when auth opens
   - [x] show a clear signup gate before generation starts
   - [ ] keep the top navigation and hero layout visually stable during the gate
-  - [ ] add a mock signed-out generate state for validation
-- [ ] Add the signup-before-generation gate
+- [x] Add the signup-before-generation gate
   - [x] unify all entry triggers to a single auth modal
   - [x] make the modal the conversion layer for uploads and CTA actions
   - [x] prevent file loss while the auth flow is active
-- [ ] Create the post-signup redirect and user onboarding flow
-  - [ ] resume the selected upload after sign in
-  - [ ] continue into the generation flow without resetting the draft
-  - [ ] show a follow-up onboarding or profile step if needed
+- [x] Create the post-signup redirect
+  - [x] resume the selected upload after sign in
+  - [x] continue into the generation flow without resetting the draft
 
 ## Phase 2: Core generation flow
-- [ ] Add upload state and file handling
-- [ ] Create the generation request flow
+- [x] Add upload state and file handling
+- [x] Create the generation request flow
 - [x] Add credit checks and decrement logic
-- [ ] Implement a mock or queued generation state
-- [ ] Build the result page and final asset view
-- [ ] Add basic loading and success/error UI states
+- [x] Implement the mock render state machine
+- [x] Build the result view with the finished video
+- [x] Add loading, success, and error UI states
+- [x] Refund credits when a job fails
+- [ ] Show the out-of-credits modal with the share-to-earn offer
 
 ## Phase 3: Supabase setup
-- [ ] Create Supabase project
-- [ ] Set up auth providers and session handling
-- [ ] Create the minimal user table
-- [ ] Create the credits table and credit rules
-- [ ] Connect app auth to Supabase
-- [ ] Store and read user state in the app
-- [ ] Verify signup and session persistence
+- [x] Create Supabase project
+- [x] Set up email and password auth with cookie sessions
+- [x] Create the profiles and jobs tables
+- [x] Add the reserve_generation and settle_job functions
+- [x] Connect app auth to Supabase
+- [x] Protect /generate server-side
+- [x] Add the /auth/confirm route for the confirmation email
+- [ ] Set the Site URL and Redirect URLs in the Supabase dashboard
+- [ ] Verify signup, email confirmation, and session persistence with a real account
 
-## Phase 4: PostHog analytics
+## Phase 4: Free tool
+- [x] Build the /mp3-to-mp4 page
+- [x] Add POST /api/convert in mock mode
+- [x] Gate the full render behind signup from the free tool
+
+## Phase 5: Real rendering
+- [ ] Create the public songs bucket in Supabase Storage with a 25 MB cap
+- [ ] Upload audio from the browser and keep the file URL on the job
+- [ ] Call Shotstack from /api/convert when MOCK_RENDER is off
+- [ ] Call Shotstack from /api/jobs and write status back through settle_job
+- [ ] Pick the static cover image for the free conversion
+
+## Phase 6: PostHog analytics
 - [ ] Add PostHog to the app
 - [ ] Track landing and upload events
 - [ ] Track signup flow events
@@ -44,17 +58,17 @@
 - [ ] Track completion and result events
 - [ ] Review event data in PostHog
 
-## Phase 5: QA and polish
+## Phase 7: QA and polish
 - [ ] Test the full funnel end-to-end
-- [ ] Confirm credit rules and gating work correctly
+- [ ] Add a few core tests for the API routes and the credit functions
 - [ ] Check auth and session edge cases
 - [ ] Fix UX issues and polish the flow
-- [ ] Prepare deployment configuration
 - [ ] Validate production environment variables
+- [ ] Deploy to Vercel
 
 ## First milestone target
-- [ ] Anonymous user can upload
+- [x] Anonymous user can upload
 - [x] User hits generate and sees signup gate
-- [ ] User signs up successfully
+- [ ] User signs up successfully (built, needs a live check)
 - [x] Credits are checked and reduced
-- [ ] Generation completes in mock or queued flow
+- [x] Generation completes in the mock flow (built, needs a live check)

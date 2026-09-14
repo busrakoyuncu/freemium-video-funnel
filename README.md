@@ -28,11 +28,11 @@ The app is meant to demonstrate:
 
 ## Pages
 
-- / : landing page with links to the tool and auth flows
+- / : landing page with the upload panel, a link to the free tool, and the auth modal
 - /mp3-to-mp4 : free tool experience, no login required
-- /signup : email and password signup
-- /login : email and password login
 - /generate : protected page for render creation and progress tracking
+
+Sign up and sign in use one shared modal. There are no separate auth pages.
 
 ## Backend behavior
 
@@ -45,10 +45,12 @@ The app uses Next.js API routes for the job flow:
 Important rules:
 
 - session is required for job creation and lookup
-- user ownership is enforced server-side
-- user.id is read from the Supabase session only
-- credits are reserved on start, committed on success, and refunded on failure
+- user ownership is enforced server-side through row-level security
+- user.id is read from the Supabase session cookie only
+- credits are reserved on start and refunded on failure, inside database functions
 - MOCK_RENDER=true simulates render stages without calling Shotstack
+
+Real rendering is not connected yet. With MOCK_RENDER off, both POST routes refuse with 501 before touching credits. See [docs/ARCHITECTURE-BE.md](docs/ARCHITECTURE-BE.md) for the planned Shotstack flow.
 
 ## Data model
 
@@ -90,10 +92,11 @@ Server events include:
 
 - Next.js App Router
 - TypeScript
-- Mantine UI
-- Supabase Auth and Postgres
-- Shotstack sandbox
-- PostHog
+- CSS Modules with design tokens
+- Zustand for the upload draft and modal state
+- Supabase Auth (cookie sessions via @supabase/ssr) and Postgres
+- Shotstack sandbox (planned)
+- PostHog (planned)
 - Vercel deployment
 
 ## Local setup
@@ -114,19 +117,21 @@ Open http://localhost:3000 in the browser.
 
 ## Environment variables
 
-This project expects environment variables for Supabase, Shotstack, and PostHog. The exact values depend on your local setup. The app should include a mock render mode for local testing.
+Copy `.env.example` to `.env.local` and fill in the Supabase values from Project Settings, API. Keep `MOCK_RENDER=true` until Shotstack is connected. The service role key is needed for the mock render to move jobs forward.
 
-Example keys to configure:
+## Supabase setup
 
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-SHOTSTACK_API_KEY=
-NEXT_PUBLIC_POSTHOG_KEY=
-NEXT_PUBLIC_POSTHOG_HOST=
-MOCK_RENDER=true
-```
+1. Run the files in `supabase/migrations/` in order in the SQL editor.
+2. Under Authentication, URL Configuration, set the Site URL to your app URL (http://localhost:3000 in development) and add `http://localhost:3000/**` to Redirect URLs. Add the production URL the same way at deploy time.
+3. Under Authentication, Sign In / Providers, Email, keep "Confirm email" on.
+
+Signup asks Supabase to send the user back to `/auth/confirm`, which exchanges the one-time code for a session cookie and opens the workspace. With the default email template the link must be opened in the browser that signed up. Supabase only allows editing the template with custom SMTP; if that is set up later, point the template at `/auth/confirm?token_hash={{ .TokenHash }}&type=email` and the same route works from any device.
+
+## Current status
+
+Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode.
+
+Not yet: audio upload storage, Shotstack rendering, PostHog, the out-of-credits modal, tests. See [TODO.md](TODO.md).
 
 ## Notes
 

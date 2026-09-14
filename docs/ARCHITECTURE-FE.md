@@ -1,50 +1,43 @@
-This is the frontend implementation view of [../PRD.md](../PRD.md). It keeps the product intent, and strips away extra design work. The app should stay simple, fast, and easy to reason about.
+This is the frontend implementation view of [../PRD.md](../PRD.md). It describes what is built, not a plan.
 
 ## 1. ROUTING
-The App Router pages are the product flow from [../PRD.md](../PRD.md). Server components are the default. A page is a client component only when it needs hooks, browser events, or direct DOM behavior.
+Pages are server components by default. They read the session with the cookie-backed Supabase client and hand the result to a client component that owns the browser behavior.
 
-- / : server component. It is mostly static marketing. It links to the free tool and auth flows.
-- /mp3-to-mp4 : client component. It needs file upload, drag and drop, processing state, and button handlers.
-- /signup and /login : client components. They need auth form state and browser submit handlers.
-- /generate : client component. It needs polling, job status updates, and credit display updates.
+- / : server component. Renders the hero, the upload panel, and the auth modal. Shows a workspace link instead of the sign in button when the user is signed in.
+- /mp3-to-mp4 : server component wrapping the client `FreeTool`. Public. Converts audio to a video in mock mode and offers the paid render behind the signup gate.
+- /generate : server component. Redirects home without a session, reads the credit balance from `profiles`, and renders the client `GenerateWorkspace`. The job id lives in the `job` query string so a refresh keeps the progress view.
 
-This keeps page data loading safe and simple. The server handles data access where possible. The client handles only the behavior that needs the browser.
+There are no /signup or /login pages. All auth happens in one modal that any page can open. After signup the modal asks the user to open the confirmation email; that link lands on the server route `/auth/confirm` and then in the workspace. The selected file does not survive that hop, since the link opens a fresh tab, so the workspace offers its own file picker.
+
+`proxy.ts` (Next 16's middleware) refreshes the session cookie on every request and redirects signed-out visitors away from /generate before the page renders.
 
 ## 2. COMPONENTS
-Anything used on two or more pages belongs in components/. Pages should stay as thin composition layers and hold page logic only.
+| Name | File | Used on | Purpose |
+| --- | --- | --- | --- |
+| AuthModal | components/auth/auth-modal.tsx | /, /mp3-to-mp4 | Sign in and sign up tabs, password rules, Escape to close |
+| AuthButton | components/auth/auth-button.tsx | / | Opens the modal from a server component |
+| UploadPanel | components/features/upload-panel.tsx | / | Expanding upload area under the hero CTA, Generate gate |
+| FreeTool | components/features/free-tool.tsx | /mp3-to-mp4 | Pick audio, convert, result card, upgrade CTA |
+| GenerateWorkspace | components/features/generate-workspace.tsx | /generate | Sidebar with credits, new render form, stage list, result video |
 
-| Name | Used on which pages | Key props |
-| --- | --- | --- |
-| PageShell | /, /mp3-to-mp4, /signup, /login, /generate | title, children, showCredits |
-| UploadZone | /mp3-to-mp4 | onFileSelect, accept, loading |
-| ProcessingStatus | /mp3-to-mp4, /generate | status, message |
-| ResultCard | /mp3-to-mp4, /generate | title, src, actions |
-| CtaButton | /, /mp3-to-mp4, /generate | variant, label, onClick |
-| AuthForm | /signup, /login | mode, onSubmit |
-| CreditsBadge | /generate | credits |
-
-The rest of the UI can stay page-local if it is used once. This keeps the codebase lean and avoids a component library that is too large for a demo app.
+Each component owns its CSS module. Nothing imports another page's stylesheet.
 
 ## 3. STATE AND DATA
-Local state stays in React with useState. The app does not need Redux, Zustand, or a global store. This keeps the state easy to trace and fits the small product size.
+Local UI state stays in `useState`. One small Zustand store in `store/use-app-store.ts` holds the state that must survive navigation and the auth gate: the selected `File`, the modal open state and tab, and the landing upload panel state. The file is memory only, so a hard refresh drops it. That is accepted until audio upload storage exists.
 
-Server data is fetched from our API routes. In the generate flow, the page polls GET /api/jobs/[id] every two seconds with a useEffect-based hook in lib/. The hook stops when the status is done or failed. The job id is read from the URL so refreshes keep the current render state.
-
-This is enough for the demo. A global state library would add complexity without meaningful value.
+Server data comes from our API routes. `lib/use-job-status.ts` polls `GET /api/jobs/[id]` every two seconds and stops on `done` or `failed`. Credits are read on the server in the page, and the workspace calls `router.refresh()` when a job settles so a refund shows up.
 
 ## 4. UI CONVENTIONS
-Use Mantine for all shared UI. Do not add Tailwind. Do not add custom CSS unless Mantine cannot handle the need.
+CSS Modules only. No Mantine, no Tailwind. The palette is a set of CSS variables in `app/globals.css` and module files reference tokens, never hex values. See [DESIGN-ARCHITECTURE.md](DESIGN-ARCHITECTURE.md) for the token table.
 
-The app should configure theme settings once in the root layout. This keeps visual decisions consistent and removes repeated style hacks. Every async view needs a loading state, an empty state, and an error state. That includes file upload, conversion, and job polling.
-
-The design should be clear and direct. The main goal is to help users understand the conversion steps, not to impress with heavy visual layering.
+Shared file validation lives in `lib/audio-file.ts` and is used by the browser and the API routes. Every async view has a loading, error, and result state.
 
 ## 5. ANALYTICS TOUCHPOINTS
-Client-side PostHog events should be fired in handlers, not in render. This keeps the events tied to actual user actions.
+PostHog is not added yet. When it is, client events fire in handlers, not in render:
 
-- PageShell or landing hero: tool_opened, when the tool page is opened or the user reaches the main CTA area.
-- UploadZone: file_uploaded, when a valid MP3 is selected.
-- ProcessingStatus: processing_done, when the free conversion finishes successfully.
-- CtaButton: cta_clicked, when the user taps the upgrade or generate CTA.
+- FreeTool mount: tool_opened
+- UploadPanel and FreeTool file change: file_uploaded
+- FreeTool convert success: processing_done
+- Generate buttons (UploadPanel, FreeTool, GenerateWorkspace): cta_clicked
 
-Server-side events come from the API layer and are not part of the frontend component contract. The frontend should be small and responsible only for user actions and UI state.
+Server events come from the API routes.
