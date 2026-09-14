@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'You need more credits to generate a video.' }, { status: 402 });
     }
 
-    console.error('reserve_generation failed', reservationError);
+    console.error('reserve_generation failed:', reservationError?.message ?? reservationError);
     return NextResponse.json({ error: 'Could not start the generation.' }, { status: 500 });
   }
 

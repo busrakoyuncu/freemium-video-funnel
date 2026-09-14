@@ -67,6 +67,7 @@ Server events:
 - job_created
 - job_completed
 - job_failed
+- share_reward_claimed
 
 The target funnel is:
 tool_opened -> file_uploaded -> cta_clicked -> signup_completed -> job_created -> job_completed

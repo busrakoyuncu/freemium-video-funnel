@@ -19,6 +19,7 @@ There are no /signup or /login pages. All auth happens in one modal that any pag
 | UploadPanel | components/features/upload-panel.tsx | / | Expanding upload area under the hero CTA, Generate gate |
 | FreeTool | components/features/free-tool.tsx | /mp3-to-mp4 | Pick audio, convert, result card, upgrade CTA |
 | GenerateWorkspace | components/features/generate-workspace.tsx | /generate | Sidebar with credits, new render form, stage list, result video |
+| CreditsModal | components/features/credits-modal.tsx | /generate | Out-of-credits explanation and the share-to-earn link; says up front when sharing is not available yet; also opened from the plan card |
 
 Each component owns its CSS module. Nothing imports another page's stylesheet.
 
@@ -39,5 +40,6 @@ PostHog is initialized once in `instrumentation-client.ts` when a key is set, wi
 - UploadPanel, FreeTool, and GenerateWorkspace file change: file_uploaded, with `source`, `size`, `type`
 - FreeTool convert success: processing_done
 - Generate buttons on landing, free tool, and workspace: cta_clicked, with `cta`, `source`, `signed_in`
+- Share link in the credits modal: cta_clicked with `cta = share_to_earn`
 
 Server events come from the API routes; see [ARCHITECTURE-BE.md](ARCHITECTURE-BE.md).

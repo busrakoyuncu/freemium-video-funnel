@@ -46,7 +46,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
         const { error } = await supabase.rpc('fail_job', { job_id: id });
 
         if (error) {
-          console.error('fail_job failed', error);
+          console.error('fail_job failed:', error?.message ?? error);
           return NextResponse.json({ error: 'Could not update the job.' }, { status: 500 });
         }
       }
@@ -80,7 +80,7 @@ async function advanceJob(jobId: string, status: JobStatus, videoUrl: string | n
   });
 
   if (error) {
-    console.error('settle_job failed', error);
+    console.error('settle_job failed:', error?.message ?? error);
     return false;
   }
 

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { isMockRender, isTerminal, mockStageFor } from './jobs';
+import { isMockRender, isTerminal, mockStageFor, shareRewardStatus } from './jobs';
 
 describe('isTerminal', () => {
   it('treats only done and failed as terminal', () => {
@@ -60,5 +60,27 @@ describe('isMockRender', () => {
     expect(isMockRender()).toBe(false);
     vi.stubEnv('MOCK_RENDER', '');
     expect(isMockRender()).toBe(false);
+  });
+});
+
+describe('shareRewardStatus', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('requires a finished video before anything else', () => {
+    expect(shareRewardStatus(0, null)).toBe('no_video');
+    expect(shareRewardStatus(0, '2020-01-01T00:00:00.000Z')).toBe('no_video');
+  });
+
+  it('is eligible with a finished video and no claim yet', () => {
+    expect(shareRewardStatus(1, null)).toBe('eligible');
+  });
+
+  it('blocks a second claim within a day and allows it after', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-14T12:00:00.000Z'));
+    expect(shareRewardStatus(1, '2026-09-14T00:00:00.000Z')).toBe('claimed_today');
+    expect(shareRewardStatus(1, '2026-09-13T11:59:00.000Z')).toBe('eligible');
   });
 });

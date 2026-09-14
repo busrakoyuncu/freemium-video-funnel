@@ -149,3 +149,18 @@ the signed-in render once the app is deployed, because that is the test that cat
 env var or dashboard setting. The SQL functions are left to manual verification: pgTAP needs a
 local Supabase stack, which is more setup than a demo warrants. Component and snapshot tests are
 skipped because they break on UI changes without protecting the funnel.
+
+## Out of credits: keep the button live, explain in a modal
+
+When a render costs more than the balance, the Generate button stays enabled and opens a
+modal instead of being greyed out, as the PRD asks. The check runs on the client against the
+server-rendered balance, and the API's 402 opens the same modal, so a stale page cannot bypass
+it. The modal offers the share-to-earn path with a prefilled share link, and clicking it grants the
+50 credits through `claim_share_reward()`. A demo cannot verify that a post was really made, so
+the function limits the damage instead: the user must have at least one finished video to
+share, and the reward pays out at most once per day. Both rules are in the database, not the
+browser. The page computes the same rules server-side (`shareRewardStatus` in `lib/jobs.ts`)
+so the modal explains in plain words why sharing is not available yet, before any click, and
+only shows the share link when it will pay out. The click is measured with `cta_clicked`
+(`cta = share_to_earn`) and the grant with `share_reward_claimed`. The plan card links to the same modal so the offer is discoverable
+before credits run out.

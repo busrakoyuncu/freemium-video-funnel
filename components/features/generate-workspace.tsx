@@ -6,23 +6,26 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import posthog from 'posthog-js';
 import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
-import { GENERATION_COST, isTerminal, RENDER_STAGES } from '@/lib/jobs';
+import { GENERATION_COST, isTerminal, RENDER_STAGES, type ShareRewardStatus } from '@/lib/jobs';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
 import { useJobStatus } from '@/hooks/use-job-status';
+import { CreditsModal } from './credits-modal';
 import { useAppStore } from '@/hooks/use-app-store';
 import styles from './generate-workspace.module.css';
 
 type GenerateWorkspaceProps = {
   credits: number;
   jobId: string | null;
+  shareStatus: ShareRewardStatus;
 };
 
-export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
+export function GenerateWorkspace({ credits, jobId, shareStatus }: GenerateWorkspaceProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { selectedFile, setSelectedFile } = useAppStore();
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCreditsModalOpen, setIsCreditsModalOpen] = useState(false);
   const { job, error: jobError } = useJobStatus(jobId);
 
   // Credits are rendered on the server, so re-render once the job settles (refunds on failure).
@@ -73,8 +76,15 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
     }
 
     setErrorMessage('');
-    setIsSubmitting(true);
     track('cta_clicked', { cta: 'generate', source: 'workspace', signed_in: true });
+
+    // The button stays enabled when credits run out; the modal explains what to do instead.
+    if (credits < GENERATION_COST) {
+      setIsCreditsModalOpen(true);
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('/api/jobs', {
@@ -89,6 +99,12 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
         }),
       });
       const result = (await response.json()) as { error?: string; jobId?: string };
+
+      // The server's balance wins over the one rendered on the page.
+      if (response.status === 402) {
+        setIsCreditsModalOpen(true);
+        return;
+      }
 
       if (!response.ok || !result.jobId) {
         throw new Error(result.error ?? 'Could not start the generation.');
@@ -119,6 +135,9 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
           <span className={styles.eyebrow}>Free plan</span>
           <strong>{credits} credits</strong>
           <span>{GENERATION_COST} credits per full video</span>
+          <button className={styles.planLink} type="button" onClick={() => setIsCreditsModalOpen(true)}>
+            Earn 50 credits
+          </button>
         </div>
         <button className={styles.signOutButton} type="button" onClick={handleSignOut}>
           Sign out
@@ -259,6 +278,13 @@ export function GenerateWorkspace({ credits, jobId }: GenerateWorkspaceProps) {
           </section>
         )}
       </section>
+
+      <CreditsModal
+        credits={credits}
+        shareStatus={shareStatus}
+        isOpen={isCreditsModalOpen}
+        onClose={() => setIsCreditsModalOpen(false)}
+      />
     </main>
   );
 }

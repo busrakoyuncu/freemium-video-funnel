@@ -25,7 +25,8 @@
 - [x] Build the result view with the finished video
 - [x] Add loading, success, and error UI states
 - [x] Refund credits when a job fails
-- [ ] Show the out-of-credits modal with the share-to-earn offer
+- [x] Show the out-of-credits modal with the share-to-earn offer
+- [x] Grant the share reward through claim_share_reward, once a day, finished video required
 
 ## Phase 3: Supabase setup
 - [x] Create Supabase project

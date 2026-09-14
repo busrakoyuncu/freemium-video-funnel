@@ -48,6 +48,7 @@ Important rules:
 - user ownership is enforced server-side through row-level security
 - user.id is read from the Supabase session cookie only
 - credits are reserved on start and refunded on failure, inside database functions
+- sharing a finished video earns 50 credits, once a day, through POST /api/credits/share
 - MOCK_RENDER=true simulates render stages without calling Shotstack
 
 Real rendering is not connected yet. With MOCK_RENDER off, both POST routes refuse with 501 before touching credits. See [docs/ARCHITECTURE-BE.md](docs/ARCHITECTURE-BE.md) for the planned Shotstack flow.
@@ -72,7 +73,7 @@ The database is intentionally small. Only these tables are in scope:
 
 PostHog is wired in. Set `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` (EU projects use `https://eu.i.posthog.com`) and events appear under Activity. Browser events fire from handlers through `lib/analytics.ts`; server events fire from the API routes through `lib/analytics-server.ts`. Both use the Supabase user id as the person id, so one user's events line up across browser and server.
 
-Four funnel insights exist in the PostHog project: "Free tool to render" (the main one below), "Free conversion", "Workspace render", and "Signup to render". They are built from the events listed here and need no code to change.
+Five funnel insights exist in the PostHog project: "Free tool to render" (the main one below), "Free conversion", "Workspace render", "Signup to render", and "Share to earn". They are built from the events listed here and need no code to change.
 
 The analytics layer is centered on the funnel:
 
@@ -91,6 +92,7 @@ Server events include:
 - job_created
 - job_completed
 - job_failed
+- share_reward_claimed
 
 ## Stack
 
@@ -135,7 +137,7 @@ Signup asks Supabase to send the user back to `/auth/confirm`, which exchanges t
 
 Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode.
 
-Not yet: audio upload storage, Shotstack rendering, the out-of-credits modal, the Playwright smoke test. See [docs/TODO.md](docs/TODO.md).
+Not yet: audio upload storage, Shotstack rendering, the Playwright smoke test. See [docs/TODO.md](docs/TODO.md).
 
 ## Testing
 

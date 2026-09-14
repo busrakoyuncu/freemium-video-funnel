@@ -1,6 +1,11 @@
 import { PostHog } from 'posthog-node';
 
-export type ServerAnalyticsEvent = 'signup_completed' | 'job_created' | 'job_completed' | 'job_failed';
+export type ServerAnalyticsEvent =
+  | 'signup_completed'
+  | 'job_created'
+  | 'job_completed'
+  | 'job_failed'
+  | 'share_reward_claimed';
 
 /**
  * Captures a funnel event from a route handler and flushes it before returning,
