@@ -5,6 +5,8 @@ import { getSupabaseServerClient } from '@/lib/supabase/server-client';
 
 type JobRow = { id: string; status: JobStatus; video_url: string | null; created_at: string };
 
+const JOB_COLUMNS = 'id, status, video_url, created_at';
+
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await getSupabaseServerClient();
 
@@ -23,13 +25,10 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   const { id } = await params;
 
   // Row-level security limits this read to the caller's own jobs.
-  const { data } = await supabase
-    .from('jobs')
-    .select('id, status, video_url, created_at')
-    .eq('id', id)
-    .maybeSingle<JobRow>();
+  const readJob = () =>
+    supabase.from('jobs').select(JOB_COLUMNS).eq('id', id).maybeSingle<JobRow>();
 
-  let job = data;
+  let { data: job } = await readJob();
 
   if (!job) {
     return NextResponse.json({ error: 'Job not found.' }, { status: 404 });
@@ -39,26 +38,44 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     const next = mockStageFor(job.created_at);
 
     if (next.status !== job.status) {
-      const admin = getSupabaseAdminClient();
+      const advanced = await advanceJob(id, next.status, next.videoUrl);
 
-      if (!admin) {
-        return NextResponse.json(
-          { error: 'SUPABASE_SERVICE_ROLE_KEY is required to advance mock renders.' },
-          { status: 500 },
-        );
+      if (!advanced) {
+        // The render cannot be moved forward, so fail it and give the credits back.
+        const { error } = await supabase.rpc('fail_job', { job_id: id });
+
+        if (error) {
+          console.error('fail_job failed', error);
+          return NextResponse.json({ error: 'Could not update the job.' }, { status: 500 });
+        }
       }
 
-      const { data: settled, error } = await admin
-        .rpc('settle_job', { job_id: id, next_status: next.status, next_video_url: next.videoUrl })
-        .single<JobRow>();
-
-      if (error || !settled) {
-        return NextResponse.json({ error: 'Could not update the job.' }, { status: 500 });
-      }
-
-      job = settled;
+      job = (await readJob()).data ?? job;
     }
   }
 
   return NextResponse.json({ id: job.id, status: job.status, videoUrl: job.video_url });
+}
+
+/** Moves the job forward with the service role. Returns false when that is not possible. */
+async function advanceJob(jobId: string, status: JobStatus, videoUrl: string | null) {
+  const admin = getSupabaseAdminClient();
+
+  if (!admin) {
+    console.error('SUPABASE_SERVICE_ROLE_KEY is missing; cannot advance the job');
+    return false;
+  }
+
+  const { error } = await admin.rpc('settle_job', {
+    job_id: jobId,
+    next_status: status,
+    next_video_url: videoUrl,
+  });
+
+  if (error) {
+    console.error('settle_job failed', error);
+    return false;
+  }
+
+  return true;
 }

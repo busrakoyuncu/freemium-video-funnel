@@ -24,6 +24,7 @@ Functions, all `security definer`:
 
 - `reserve_generation()`: callable by authenticated users. Deducts 10 credits when the balance allows it and inserts a queued job in one statement, so two clicks cannot overspend.
 - `settle_job(job_id, next_status, next_video_url)`: revoked from anon and authenticated, called only with the service-role key. Moves a non-terminal job forward and refunds 10 credits when the new status is failed. Terminal jobs are left alone.
+- `fail_job(job_id)`: callable by the owner. Marks their own non-terminal job failed and refunds 10 credits. The status route calls it when the render cannot be advanced (missing or rejected service key, or a settle error), so a broken render never keeps the credits.
 
 Migrations live in `supabase/migrations/` and are applied by hand in the SQL editor.
 

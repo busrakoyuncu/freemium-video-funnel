@@ -105,3 +105,12 @@ templates with custom SMTP, so the default template is used, which means the lin
 opened in the browser that signed up. The route also accepts a `token_hash` so a custom template
 can be adopted later without code changes. Supabase returns a session directly from signup only
 when confirmation is off; the modal handles both cases.
+
+## Refunds never depend on the service role
+
+If the status route cannot move a job forward, whatever the reason, it calls `fail_job()` with
+the user's own session. That function is owner-scoped, only touches non-terminal jobs, and
+refunds the reserved credits. The service-role path is the happy path; the refund path must
+work even when the service-role key is missing or wrong, because that is exactly when it is
+needed. Failing a job before it finishes is safe: `video_url` is only set on done, so the user
+never gets both the video and the refund.
