@@ -114,3 +114,14 @@ refunds the reserved credits. The service-role path is the happy path; the refun
 work even when the service-role key is missing or wrong, because that is exactly when it is
 needed. Failing a job before it finishes is safe: `video_url` is only set on done, so the user
 never gets both the video and the refund.
+
+## Analytics: one person id across browser and server
+
+Browser events fire from handlers through `track()`, server events from route handlers through
+`trackServer()`. Both use the Supabase user id as the PostHog person id, and the workspace page
+identifies the browser with that id, so PostHog stitches the anonymous landing visit to the
+signed-in render. Server events flush before the route returns because serverless functions can
+be frozen right after responding. `signup_completed` fires in `/auth/confirm`, since with email
+confirmation on that is the moment signup is actually complete. If confirmation is ever turned
+off, the modal's direct-session path needs the same event. Without a PostHog key, every call is
+a no-op so the app runs unchanged.

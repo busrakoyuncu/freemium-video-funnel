@@ -35,7 +35,14 @@ In mock mode, `GET /api/jobs/[id]` derives the stage from the job age (queued un
 
 Planned real mode: the browser uploads audio to a public `songs` bucket (25 MB cap, audio only), the route sends the file URL to Shotstack, and status polling asks Shotstack and writes back through `settle_job`. The output stays on the Shotstack CDN and `jobs.video_url` stores the link.
 
-## 5. ENV VARS
+## 5. ANALYTICS
+Server events go through `trackServer()` in `lib/analytics-server.ts`. It creates a PostHog client per call, captures with the Supabase user id as the person id, and awaits the flush before returning so a serverless function cannot be frozen with the event still queued.
+
+- `signup_completed`: `/auth/confirm`, after the code or token hash is exchanged for a session.
+- `job_created`: `POST /api/jobs`, after `reserve_generation` succeeds, with `job_id`.
+- `job_completed` and `job_failed`: `GET /api/jobs/[id]`, on the poll that moves the job to a terminal state, with `job_id`. The refund path emits `job_failed` too.
+
+## 6. ENV VARS
 | Variable | Scope | Purpose | Status |
 | --- | --- | --- | --- |
 | NEXT_PUBLIC_SUPABASE_URL | Public | Supabase project URL | Required |
@@ -43,6 +50,6 @@ Planned real mode: the browser uploads audio to a public `songs` bucket (25 MB c
 | SUPABASE_SERVICE_ROLE_KEY | Server only | Calls `settle_job` | Required for the mock render |
 | MOCK_RENDER | Server only | Enables the mock flow | Required, must be `true` |
 | SHOTSTACK_API_KEY | Server only | Real rendering | Planned |
-| NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST | Public | Analytics | Planned |
+| NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST | Public | Analytics, also used by the server helper | Optional, events skipped without them |
 
 `.env.example` lists them. The service role and Shotstack keys must never be prefixed with NEXT_PUBLIC_.

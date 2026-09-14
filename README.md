@@ -70,6 +70,8 @@ The database is intentionally small. Only these tables are in scope:
 
 ## Analytics
 
+PostHog is wired in. Set `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` (EU projects use `https://eu.i.posthog.com`) and events appear under Activity. Browser events fire from handlers through `lib/analytics.ts`; server events fire from the API routes through `lib/analytics-server.ts`. Both use the Supabase user id as the person id, so one user's events line up across browser and server.
+
 The analytics layer is centered on the funnel:
 
 tool_opened -> file_uploaded -> cta_clicked -> signup_completed -> job_created -> job_completed
@@ -96,7 +98,7 @@ Server events include:
 - Zustand for the upload draft and modal state
 - Supabase Auth (cookie sessions via @supabase/ssr) and Postgres
 - Shotstack sandbox (planned)
-- PostHog (planned)
+- PostHog for funnel analytics
 - Vercel deployment
 
 ## Local setup
@@ -131,7 +133,7 @@ Signup asks Supabase to send the user back to `/auth/confirm`, which exchanges t
 
 Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode.
 
-Not yet: audio upload storage, Shotstack rendering, PostHog, the out-of-credits modal, tests. See [TODO.md](TODO.md).
+Not yet: audio upload storage, Shotstack rendering, the PostHog funnel insight, the out-of-credits modal, tests. See [TODO.md](TODO.md).
 
 ## Notes
 

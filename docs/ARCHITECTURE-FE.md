@@ -33,11 +33,11 @@ CSS Modules only. No Mantine, no Tailwind. The palette is a set of CSS variables
 Shared file validation lives in `lib/audio-file.ts` and is used by the browser and the API routes. Every async view has a loading, error, and result state.
 
 ## 5. ANALYTICS TOUCHPOINTS
-PostHog is not added yet. When it is, client events fire in handlers, not in render:
+PostHog is initialized once in `instrumentation-client.ts` when a key is set, with automatic pageviews. `IdentifyUser` on the workspace page ties the browser to the Supabase user id, and sign out resets it. Client events go through `track()` in `lib/analytics.ts`, always from handlers, never from render:
 
-- FreeTool mount: tool_opened
-- UploadPanel and FreeTool file change: file_uploaded
+- FreeTool mount and landing upload panel open: tool_opened, with `source`
+- UploadPanel, FreeTool, and GenerateWorkspace file change: file_uploaded, with `source`, `size`, `type`
 - FreeTool convert success: processing_done
-- Generate buttons (UploadPanel, FreeTool, GenerateWorkspace): cta_clicked
+- Generate buttons on landing, free tool, and workspace: cta_clicked, with `cta`, `source`, `signed_in`
 
-Server events come from the API routes.
+Server events come from the API routes; see [ARCHITECTURE-BE.md](ARCHITECTURE-BE.md).

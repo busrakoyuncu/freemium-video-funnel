@@ -53,10 +53,10 @@
 ## Phase 6: PostHog analytics
 - [x] Add PostHog to the app with pageviews and user identification
 - [x] Track landing and upload events
-- [ ] Track signup flow events
-- [ ] Track generation attempts and credit usage
-- [ ] Track completion and result events
-- [ ] Review event data in PostHog
+- [x] Track signup flow events
+- [x] Track generation attempts and credit usage
+- [x] Track completion and result events
+- [ ] Build the funnel insight in PostHog and review the data
 
 ## Phase 7: QA and polish
 - [ ] Test the full funnel end-to-end

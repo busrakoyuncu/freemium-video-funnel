@@ -63,7 +63,7 @@ Client events:
 - cta_clicked
 
 Server events:
-- signup_completed
+- signup_completed (fires when the confirmation link is verified)
 - job_created
 - job_completed
 - job_failed
@@ -74,7 +74,7 @@ tool_opened -> file_uploaded -> cta_clicked -> signup_completed -> job_created -
 This funnel is the centerpiece of the demo. It lets the team see whether the free tool is converting into paid behavior and whether the upgrade path is working. The key change is that the signup step happens before the paid generation action begins.
 
 ## 7. STACK
-The app uses Next.js App Router with TypeScript. It uses CSS Modules with a small token set, no UI library and no Tailwind. A small Zustand store carries the upload draft across the signup gate. It uses Supabase for auth and database. It will use Shotstack sandbox for video rendering and PostHog for analytics. It is deployed on Vercel.
+The app uses Next.js App Router with TypeScript. It uses CSS Modules with a small token set, no UI library and no Tailwind. A small Zustand store carries the upload draft across the signup gate. It uses Supabase for auth and database. It will use Shotstack sandbox for video rendering. It uses PostHog for analytics. It is deployed on Vercel.
 
 The shared UI lives in components/. Each repeated element gets a single reusable component. This keeps the demo clean and easy to extend.
 
