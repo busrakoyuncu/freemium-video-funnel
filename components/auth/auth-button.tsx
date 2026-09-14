@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useAppStore } from '@/store/use-app-store';
+import { useAppStore } from '@/hooks/use-app-store';
 
 type AuthButtonProps = {
   className?: string;

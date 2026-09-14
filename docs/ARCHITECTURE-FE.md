@@ -1,4 +1,4 @@
-This is the frontend implementation view of [../PRD.md](../PRD.md). It describes what is built, not a plan.
+This is the frontend implementation view of [PRD.md](PRD.md). It describes what is built, not a plan.
 
 ## 1. ROUTING
 Pages are server components by default. They read the session with the cookie-backed Supabase client and hand the result to a client component that owns the browser behavior.
@@ -23,9 +23,9 @@ There are no /signup or /login pages. All auth happens in one modal that any pag
 Each component owns its CSS module. Nothing imports another page's stylesheet.
 
 ## 3. STATE AND DATA
-Local UI state stays in `useState`. One small Zustand store in `store/use-app-store.ts` holds the state that must survive navigation and the auth gate: the selected `File`, the modal open state and tab, and the landing upload panel state. The file is memory only, so a hard refresh drops it. That is accepted until audio upload storage exists.
+Local UI state stays in `useState`. One small Zustand store in `hooks/use-app-store.ts` holds the state that must survive navigation and the auth gate: the selected `File`, the modal open state and tab, and the landing upload panel state. The file is memory only, so a hard refresh drops it. That is accepted until audio upload storage exists.
 
-Server data comes from our API routes. `lib/use-job-status.ts` polls `GET /api/jobs/[id]` every two seconds and stops on `done` or `failed`. Credits are read on the server in the page, and the workspace calls `router.refresh()` when a job settles so a refund shows up.
+Server data comes from our API routes. `hooks/use-job-status.ts` polls `GET /api/jobs/[id]` every two seconds and stops on `done` or `failed`. Credits are read on the server in the page, and the workspace calls `router.refresh()` when a job settles so a refund shows up.
 
 ## 4. UI CONVENTIONS
 CSS Modules only. No Mantine, no Tailwind. The palette is a set of CSS variables in `app/globals.css` and module files reference tokens, never hex values. See [DESIGN-ARCHITECTURE.md](DESIGN-ARCHITECTURE.md) for the token table.

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppStore } from '@/store/use-app-store';
+import { useAppStore } from '@/hooks/use-app-store';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
 import styles from './auth-modal.module.css';
 

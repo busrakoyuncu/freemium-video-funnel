@@ -1,4 +1,4 @@
-This is the backend implementation view of [../PRD.md](../PRD.md). It describes what is built and marks what is still planned.
+This is the backend implementation view of [PRD.md](PRD.md). It describes what is built and marks what is still planned.
 
 ## 1. API ROUTES
 | Method | Path | Auth | Request | Response | Errors |

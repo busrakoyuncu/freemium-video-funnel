@@ -135,7 +135,7 @@ Signup asks Supabase to send the user back to `/auth/confirm`, which exchanges t
 
 Working: landing upload, signup gate, cookie auth, credit reservation, mock render with stage polling, refund on failure, free tool in mock mode.
 
-Not yet: audio upload storage, Shotstack rendering, the out-of-credits modal, tests. See [TODO.md](TODO.md).
+Not yet: audio upload storage, Shotstack rendering, the out-of-credits modal, the Playwright smoke test. See [docs/TODO.md](docs/TODO.md).
 
 ## Testing
 
@@ -149,8 +149,15 @@ The SQL functions are not tested automatically. They are small, were verified li
 
 Run with `npm test`. See [docs/TESTING.md](docs/TESTING.md) for how the mocks work and how to add a test.
 
+## Docs
+
+- [docs/PRD.md](docs/PRD.md): product requirements, the source of truth for scope
+- [docs/TODO.md](docs/TODO.md): what is done and what is next
+- [docs/decisions.md](docs/decisions.md): why things are the way they are
+- [docs/ARCHITECTURE-FE.md](docs/ARCHITECTURE-FE.md) and [docs/ARCHITECTURE-BE.md](docs/ARCHITECTURE-BE.md): how the app is built
+- [docs/DESIGN-ARCHITECTURE.md](docs/DESIGN-ARCHITECTURE.md): visual direction and tokens
+- [docs/TESTING.md](docs/TESTING.md): how the tests work
+
 ## Notes
 
 This project is a demo for product and funnel validation. It keeps the scope narrow and intentionally omits broader SaaS features such as OAuth, password reset, payments, and profile management.
-
-The official product requirements live in [PRD.md](PRD.md).

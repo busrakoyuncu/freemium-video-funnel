@@ -4,7 +4,7 @@ import { ChangeEvent, KeyboardEvent, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
-import { useAppStore } from '@/store/use-app-store';
+import { useAppStore } from '@/hooks/use-app-store';
 import styles from './upload-panel.module.css';
 
 type UploadPanelProps = {

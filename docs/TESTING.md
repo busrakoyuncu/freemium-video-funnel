@@ -1,6 +1,6 @@
 # Testing
 
-How the test suite is built and how to extend it. The reasoning behind the scope is in [../decisions.md](../decisions.md).
+How the test suite is built and how to extend it. The reasoning behind the scope is in [decisions.md](decisions.md).
 
 ## Running
 

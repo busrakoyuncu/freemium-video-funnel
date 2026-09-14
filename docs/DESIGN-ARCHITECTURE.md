@@ -1,6 +1,6 @@
 # Design Architecture
 
-This is the visual direction for the product described in [PRD.md](../PRD.md). The goal is to mirror the feel of the reference, but tune it for this freemium AI video funnel. The reference is a premium creator dashboard. The product should feel the same: dark, calm, confident, and warm.
+This is the visual direction for the product described in [PRD.md](PRD.md). The goal is to mirror the feel of the reference, but tune it for this freemium AI video funnel. The reference is a premium creator dashboard. The product should feel the same: dark, calm, confident, and warm.
 
 The token values below live in `app/globals.css` and are the source of truth. When this doc and the stylesheet disagree, update the doc.
 
@@ -160,7 +160,7 @@ Reference mockup (external, the local copy was removed):
 - https://claude.ai/code/artifact/02c7f139-ef8a-4984-8a82-e24d2e57c83a
 
 Related docs:
-- [PRD.md](../PRD.md)
+- [PRD.md](PRD.md)
 - [docs/ARCHITECTURE-FE.md](ARCHITECTURE-FE.md)
 - [docs/ARCHITECTURE-BE.md](ARCHITECTURE-BE.md)
 

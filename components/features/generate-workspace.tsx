@@ -8,8 +8,8 @@ import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
 import { GENERATION_COST, isTerminal, RENDER_STAGES } from '@/lib/jobs';
 import { getSupabaseBrowserClient } from '@/lib/supabase/browser-client';
-import { useJobStatus } from '@/lib/use-job-status';
-import { useAppStore } from '@/store/use-app-store';
+import { useJobStatus } from '@/hooks/use-job-status';
+import { useAppStore } from '@/hooks/use-app-store';
 import styles from './generate-workspace.module.css';
 
 type GenerateWorkspaceProps = {

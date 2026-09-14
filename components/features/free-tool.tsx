@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { track } from '@/lib/analytics';
 import { formatFileSize, validateAudioFile } from '@/lib/audio-file';
-import { useAppStore } from '@/store/use-app-store';
+import { useAppStore } from '@/hooks/use-app-store';
 import styles from './free-tool.module.css';
 
 type FreeToolProps = {
