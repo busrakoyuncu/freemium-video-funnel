@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { trackServer } from '@/lib/analytics-server';
 import { isMockRender, isTerminal, mockStageFor, type JobStatus } from '@/lib/jobs';
 import { getSupabaseAdminClient } from '@/lib/supabase/admin-client';
 import { getSupabaseServerClient } from '@/lib/supabase/server-client';
@@ -51,6 +52,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       }
 
       job = (await readJob()).data ?? job;
+
+      if (isTerminal(job.status)) {
+        await trackServer(user.id, job.status === 'done' ? 'job_completed' : 'job_failed', {
+          job_id: job.id,
+        });
+      }
     }
   }
 

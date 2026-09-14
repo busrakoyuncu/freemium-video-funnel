@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { trackServer } from '@/lib/analytics-server';
 import { isAcceptedAudio, MAX_FILE_SIZE_BYTES } from '@/lib/audio-file';
 import { isMockRender } from '@/lib/jobs';
 import { getSupabaseServerClient } from '@/lib/supabase/server-client';
@@ -77,6 +78,8 @@ export async function POST(request: NextRequest) {
     console.error('reserve_generation failed', reservationError);
     return NextResponse.json({ error: 'Could not start the generation.' }, { status: 500 });
   }
+
+  await trackServer(user.id, 'job_created', { job_id: jobId as string });
 
   return NextResponse.json({ jobId, status: 'queued' }, { status: 201 });
 }

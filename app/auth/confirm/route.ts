@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import type { EmailOtpType } from '@supabase/supabase-js';
+import { trackServer } from '@/lib/analytics-server';
 import { getSupabaseServerClient } from '@/lib/supabase/server-client';
 
 const OTP_TYPES: EmailOtpType[] = ['signup', 'email', 'magiclink', 'recovery', 'email_change'];
@@ -21,18 +22,15 @@ export async function GET(request: NextRequest) {
   const supabase = await getSupabaseServerClient();
 
   if (supabase) {
-    if (code) {
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = code
+      ? await supabase.auth.exchangeCodeForSession(code)
+      : tokenHash && type && OTP_TYPES.includes(type)
+        ? await supabase.auth.verifyOtp({ type, token_hash: tokenHash })
+        : { data: { user: null }, error: new Error('Missing token') };
 
-      if (!error) {
-        return NextResponse.redirect(new URL(next, request.url));
-      }
-    } else if (tokenHash && type && OTP_TYPES.includes(type)) {
-      const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
-
-      if (!error) {
-        return NextResponse.redirect(new URL(next, request.url));
-      }
+    if (!error && data.user) {
+      await trackServer(data.user.id, 'signup_completed');
+      return NextResponse.redirect(new URL(next, request.url));
     }
   }
 
